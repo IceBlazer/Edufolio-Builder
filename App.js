@@ -10,7 +10,7 @@ import {View, Text, Image, ScrollView, TextInput, StyleSheet, Button} from 'reac
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-function HomeScreen({navigation}) {
+function HomeScreen({navigation}) { //homeScreen
   return (
     <View style={styles.container}>
       <Text>Welcome!</Text>

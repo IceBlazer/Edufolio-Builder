@@ -6,19 +6,26 @@
 import React, {useState} from 'react';
 
 // import {StatusBar} from 'expo-status-bar'
-import {Dimensions, TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity} from 'react-native';
+import {Modal, Dimensions, TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {Ionicons, MaterialIcons, AntDesign} from '@expo/vector-icons';
+import {Ionicons, MaterialIcons, AntDesign, Feather} from '@expo/vector-icons';
+import {Formik} from 'formik';
+import * as yup from 'yup';
 import AddSection from './components/addSection'
 import SectionItem from './components/sectionItem'
 import Sandbox from './components/sandbox'
+import Header from './shared/header';
+
+
 
 
 
 function HomeScreen({navigation}) { //homeScreen
   return (
     <View style={styles.container}>
+    
+
     <ScrollView>
       <Text style={styles.homeText}>Welcome!</Text>
       <Text>To start building your portfolio press Start.</Text>
@@ -81,7 +88,12 @@ function Portfolio1Builder({navigation})
   ])
 
   return (
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss();
+      //console.log('keyboard dismissed');
+    }}>
     <View style={styles.portfolioBuilderContainer}>
+    
     <AddSection /> 
       <View style = {styles.content}>
         <View style = {styles.list}>
@@ -89,14 +101,25 @@ function Portfolio1Builder({navigation})
             data={sections}
             renderItem={({item}) => (
               <TouchableOpacity onPress={() => navigation.navigate(item.name)}>
+                <Card>
                 <Text>{item.name}</Text>
+                </Card>
+                  
+                
               </TouchableOpacity>
             )}  
           />
         </View>
       </View>
+      <View>
+        <ScrollView>
+          <Text style = {{fontSize: 24}}>Add check marks in the header or a done button</Text>
+        </ScrollView>
+      </View>
+      
       
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -156,6 +179,7 @@ function PersonalInfo({navigation})
           />
 
 
+
         </View>
       </ScrollView>
     </View>
@@ -165,11 +189,21 @@ function PersonalInfo({navigation})
 
 function AthleticAchievements({navigation})
 {
-  const[sportsNames, setSportsNames] = useState([]);
 
-  const addSportName = (newName) => {
-    setSportsNames([...sportsNames, newName]);
-  };
+  const [sports, setSports] = useState([
+    {sportName: 'Soccer', startDate: '12/3/2021', endDate: '12/5/2022', avgHrsPerWeek: '3', totalHrs: '123', gradesParticipated: '6, 7, 8', comments: "i'm himothy", key: '1'},
+
+  ])
+  const addSport = (sport) => {
+    sport.key =  Math.random().toString();
+    setSports((currentSports) => {
+      return [sport, ...currentSports]
+    });
+    setModalOpen(false);
+  }
+  const [modalOpen, setModalOpen] = useState(false);
+
+  
   
   
 
@@ -180,11 +214,50 @@ function AthleticAchievements({navigation})
       console.log('keyboard dismissed');
     }}>
   <View>
+    <FlatList
+      data={sports}
+      renderItem={({item}) =>(
+        <Card>
+        <TouchableOpacity onPress={() => navigation.navigate('Sport Info', {item})}>
+          <Text>
+            {item.sportName}
+          </Text>
+        </TouchableOpacity>
+        </Card>
+      )}
+     />
+    <Modal visible={modalOpen} animationType='slide'>
+    <ScrollView>
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss();
+      console.log('keyboard dismissed');
+    }}>
+      <View style={styles.modalContent}>
+        <MaterialIcons 
+              name="close" 
+              size={50} 
+              color="black"
+              style={{...styles.modalToggle, ...styles.modalClose}}
+              onPress={() => setModalOpen(false)} 
+          />
+        <SportsForm addSport={addSport} />
+      </View>
+      </TouchableWithoutFeedback>
+      </ScrollView>
+    </Modal>
     <ScrollView>
       <Text>
+      Sport Name, Start Date, End Date, Average Hours per Week, Total Hours, Grades Participated, Description/Comments
         <View style = {{paddingLeft: 170, paddingTop: 20}}>
-        
-          <Ionicons name="md-add-circle-outline" size={50} color="black" />
+        <TouchableOpacity>
+          <Ionicons 
+            name="md-add-circle-outline" 
+            size={50} 
+            color="black"
+            style={styles.modalToggle}
+            onPress={() => setModalOpen(true)}
+             />
+          </TouchableOpacity>
         
         </View>
       </Text>
@@ -194,10 +267,147 @@ function AthleticAchievements({navigation})
   )
 }
 
+function Card(props)
+{
+    return(
+        <View style={styles.card}>
+            <View style={styles.cardContent}>
+                {props.children}
+            </View>
+        </View>
+    )
+}
+
+function SportsForm({addSport})
+{
+  const sportsSchema = yup.object({
+    sportName: yup.string().required('This field is required.').min(3, 'Must be at least 3 characters'),
+    startDate: yup.date().required('This field is required.').max(new Date()),
+    endDate: yup.date().max(new Date()),
+    avgHrsPerWeek: yup.number().required('This field is required.').positive().max(168),
+    totalHrs: yup.number().required('This field is required.').positive(),
+    gradesParticipated: yup.string().required('This field is required.'),
+    comments: yup.string()
+
+    
+  })
+
+  return(
+    <View>
+      <Formik
+        initialValues={{ sportName: '', startDate: '', endDate: '', avgHrsPerWeek: '', totalHrs: '', gradesParticipated: '', comments: ''}}
+        validationSchema={sportsSchema}
+        onSubmit={(values) => {
+          console.log(values);
+          addSport(values);
+        }}
+      >
+        {(props) => (
+          <View>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Sport Name'
+              onChangeText={props.handleChange('sportName')}
+              value={props.values.sportName}
+              onBlur={props.handleBlur('sportName')}
+            />
+            <Text style = {styles.errorText}>{props.touched.sportName && props.errors.sportName}</Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Start Date: (YYYY-MM-DD) '
+              onChangeText={props.handleChange('startDate')}
+              value={props.values.startDate}
+              onBlur={props.handleBlur('startDate')}
+            />
+            <Text style = {styles.errorText}>{props.touched.startDate && props.errors.startDate}</Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='End Date: (YYYY-MM-DD) '
+              onChangeText={props.handleChange('endDate')}
+              value={props.values.endDate}
+              onBlur={props.handleBlur('endDate')} 
+            />
+            <Text style = {styles.errorText}>{props.touched.endDate && props.errors.endDate}</Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Average Number of Hours Played per Week: '
+              onChangeText={props.handleChange('avgHrsPerWeek')}
+              value={props.values.avgHrsPerWeek}
+              keyboardType='numeric'
+              onBlur={props.handleBlur('avgHrsPerWeek')}
+            />
+            <Text style = {styles.errorText}>{props.touched.avgHrsPerWeek && props.errors.avgHrsPerWeek}</Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Total Hours Played: '
+              onChangeText={props.handleChange('totalHrs')}
+              value={props.values.totalHrs}
+              onBlur={props.handleBlur('totalHrs')}
+              keyboardType='numeric'
+            />
+            <Text style = {styles.errorText}>{props.touched.totalHrs && props.errors.totalHrs}</Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Grades Participated: '
+              onChangeText={props.handleChange('gradesParticipated')}
+              value={props.values.gradesParticipated}
+              onBlur={props.handleBlur('gradesParticipated')}
+            />
+            <Text style = {styles.errorText}>{props.touched.gradesParticipated && props.errors.gradesParticipated}</Text>
+            <TextInput 
+              style={styles.formikInput}
+              multiline
+              placeholder='Comments: '
+              onChangeText={props.handleChange('comments')}
+              value={props.values.comments}
+              onBlur={props.handleBlur('comments')}
+            />
+            <Text style = {styles.errorText}>{props.touched.comments && props.errors.avgHrsPerWeek}</Text>
+
+            
+            <Button title='submit' onPress={props.handleSubmit} />
+          </View>
+        )}
+      </Formik>
+    </View>
+  )
+}
+
+function SportInfo({route,navigation})
+{
+  const {item} = route.params;
+
+  return(
+    <View>
+    <Card>
+      <View>
+        <Text>Sport Name: {item.sportName}</Text>
+        <Text>Start Date: {item.startDate}</Text>
+        <Text>End Date: {item.endDate} </Text>
+        <Text>Average Hours Per Week: {item.avgHrsPerWeek}</Text>
+        <Text>Total Hours: {item.totalHrs}</Text>
+        <Text>Grades Participated: {item.gradesParticipated}</Text>
+        <Text>Comments: {item.comments}</Text>
+      </View>
+    </Card>
+    </View>
+    
+  );
+}
 
 
-
-
+/*function HeaderBar({navigation}) {
+  return (
+      <View style = {styles.header}>
+      {<Feather name="check" size ={20} onPress={navigation.navigate('Portfolio 1 Builder')} style = {styles.icon} />}
+          <View>
+              <Text style = {styles.headerText}>
+                  Gazomezone
+              </Text>
+          </View>
+      </View>
+  );
+} */
 
 const Stack = createNativeStackNavigator();
 
@@ -212,17 +422,26 @@ export default function App() {
     setAge('50');
     setUserInfo({firstName: 'Jeff', lastName: 'Doe', email: 'johndoe@hotmail.com', phoneNum: 2224568765, address: '9110 Trenton Way' });
   } */
-
+  
   
 
   return (
+    
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Navigator >
+        <Stack.Screen 
+          name = "Home" 
+          component={HomeScreen} 
+        />
         <Stack.Screen name = "Portfolio List" component={PortfolioList} />
         <Stack.Screen name = "Portfolio 1 Builder" component={Portfolio1Builder}/>
-        <Stack.Screen name = "Personal Info" component={PersonalInfo}/>
+        <Stack.Screen 
+          name = "Personal Info"
+          component={PersonalInfo}
+          //options={{ headerTitle: (props) => <HeaderBar {...props} />, headerBackTitleVisible: false}}
+           />
         <Stack.Screen name = "Athletic Achievements" component={AthleticAchievements}/>
+        <Stack.Screen name = "Sport Info" component={SportInfo}/>
         
       </Stack.Navigator>
     </NavigationContainer>
@@ -289,7 +508,13 @@ const styles = StyleSheet.create({
     
   },
 
-
+  errorText: {
+    color: 'crimson',
+    fontWeight: 'bold',
+    marginBottom: 10,
+    marginTop: 6,
+    textAlign: 'center',
+  },
 
   portfolioButton: {
     alignItems: 'center',
@@ -307,7 +532,7 @@ const styles = StyleSheet.create({
 
   portfolioButtonText: {
     flex: 1,
-    paddingLeft: 70,
+    //paddingLeft: 70,
     textAlign: 'left',
     fontSize: 30,
     
@@ -335,11 +560,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 
-  header: {
-    backgroundColor: 'pink',
-    padding:20,
-  },
-
   boldText: {
     fontWeight: 'bold',
   },
@@ -355,6 +575,71 @@ const styles = StyleSheet.create({
     margin: 10,
     width: 200,
   },
+
+  submitButton: {
+    marginRight:40,
+    marginLeft:40,
+    marginTop:10,
+    paddingTop:10,
+    paddingBottom:10,
+    backgroundColor:'#24a0ed',
+    borderRadius:10,
+    borderWidth: 1,
+    borderColor: '#fff'
+  },
+  header: {
+    width: '100%',
+    height: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+},
+
+headerText: {
+    fontWeight: 'bold',
+    fontSize: 30,
+    color: '#333',
+    letterSpacing: 1,
+},
+card: {
+  borderRadius: 6,
+  elevation: 3,
+  backgroundColor: '#fff',
+  shadowOffset: {width: 1, height: 1},
+  shadowColor: '#333',
+  shadowOpacity: 0.3,
+  shadowRadius: 2,
+  marginHorizontal: 4,
+  marginVertical: 6,
+
+},
+cardContent: {
+  marginHorizontal: 18,
+  marginVertical: 10,
+},
+
+modalToggle: {
+  marginBottom: 10,
+  borderWidth: 1,
+  borderColor: '#f2f2f2',
+  padding: 10,
+  borderRadius: 10,
+  alignSelf: 'center',
+},
+modalClose: {
+  marginTop: 40,
+  marginBottom: 0,
+},
+modalContent: {
+  flex: 1,
+},
+formikInput: {
+  borderWidth: 1,
+  borderColor: '#ddd',
+  padding: 10,
+  fontSize: 18,
+  borderRadius: 6,
+},
    
 
 });

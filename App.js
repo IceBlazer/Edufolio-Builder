@@ -6,7 +6,7 @@
 import React, {useState} from 'react';
 
 // import {StatusBar} from 'expo-status-bar'
-import {TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity} from 'react-native';
+import {Dimensions, TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {Ionicons, MaterialIcons, AntDesign} from '@expo/vector-icons';
@@ -170,13 +170,28 @@ function AthleticAchievements({navigation})
   const addSportName = (newName) => {
     setSportsNames([...sportsNames, newName]);
   };
+  
+  
 
- 
+
+  return(
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss();
+      console.log('keyboard dismissed');
+    }}>
   <View>
-    <Text>
-     
-    </Text>
+    <ScrollView>
+      <Text>
+        <View style = {{paddingLeft: 170, paddingTop: 20}}>
+        
+          <Ionicons name="md-add-circle-outline" size={50} color="black" />
+        
+        </View>
+      </Text>
+    </ScrollView>
   </View>
+  </TouchableWithoutFeedback>
+  )
 }
 
 
@@ -298,9 +313,8 @@ const styles = StyleSheet.create({
     
   },
 
-  content: {
-   // padding: 40,
-
+  plus: {
+   alignSelf: 'center',
   },
   list: {
    // marginTop: 20,

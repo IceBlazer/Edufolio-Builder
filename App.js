@@ -16,8 +16,8 @@ function HomeScreen({navigation}) { //homeScreen
   return (
     <View style={styles.container}>
     <ScrollView>
-      <Text>Welcome!</Text>
-      <Text>To start building your portfolio, press Start.</Text>
+      <Text style={styles.homeText}>Welcome!</Text>
+      <Text>To start building your portfolio press Start.</Text>
       <Button 
         title = "Start"
         onPress={() => navigation.navigate('Portfolio List')}
@@ -70,17 +70,20 @@ function Portfolio1Builder({navigation})
 
   const [sections, setSection] = useState([
     { name: 'Personal Info', key: '1'},
+    { name: 'Sports', key: '2'},
   ])
 
   return (
-    <View style={styles.container}>
+    <View style={styles.portfolioBuilderContainer}>
     <AddSection /> 
       <View style = {styles.content}>
         <View style = {styles.list}>
           <FlatList 
             data={sections}
             renderItem={({item}) => (
-              <Text>{item.name}</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Personal Info')}>
+                <Text>{item.name}</Text>
+              </TouchableOpacity>
             )}  
           />
         </View>
@@ -92,10 +95,28 @@ function Portfolio1Builder({navigation})
 
 function PersonalInfo({navigation})
 {
+  const [personalInfo, setPersonalInfo] = useState([
+    {firstName: '', lastName: '', address: '', phoneNum: '', email: '' }
+  ])
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [addres, setAddress] = useState('');
+
+
+
+
   return(
     <View>
       <ScrollView>
-        <Text>About me!</Text>
+        <Text>My first name is {firstName}.</Text>
+        <TextInput 
+        style = {styles.personalInfoText}
+        placeholder = 'First Name'
+        onChangeText={(val) => setFirstName(val)}
+        />
+
+        
       </ScrollView>
     </View>
   )
@@ -164,10 +185,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
-   // alignItems: 'center',
-   // justifyContent: 'center',
+    //backgroundColor: 'dodgerblue',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+
+  portfolioBuilderContainer: {
+    flex: 1,
+    padding: 20
+  },
+
+  homeText: {
+    flex: 1,
+    padding: 20,
+    fontSize: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+
+
 
   portfolioButtonText: {
     alignItems: 'center',
@@ -181,11 +218,11 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    padding: 40,
+   // padding: 40,
 
   },
   list: {
-    marginTop: 20,
+   // marginTop: 20,
 
   },
 

@@ -109,14 +109,21 @@ function PersonalInfo({navigation})
   return(
     <View>
       <ScrollView>
-        <Text>My first name is {firstName}.</Text>
+        <View style = {styles.personalInfoText}>
+        <Text >My first name is ...</Text>
         <TextInput 
         style = {styles.personalInfoText}
         placeholder = 'First Name'
         onChangeText={(val) => setFirstName(val)}
         />
+        <Text >My last name is..</Text>
+        <TextInput 
+        style = {styles.personalInfoText}
+        placeholder = 'Last Name'
+        onChangeText={(val) => setLastName(val)}
+        />
 
-        
+        </View>
       </ScrollView>
     </View>
   )
@@ -202,6 +209,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
+  },
+
+  personalInfoText: {
+    padding: 20,
   },
 
 

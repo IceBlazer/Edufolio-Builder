@@ -6,33 +6,99 @@
 import React, {useState} from 'react';
 
 // import {StatusBar} from 'expo-status-bar'
-import {View, Text, Image, ScrollView, TextInput, StyleSheet, Button} from 'react-native';
+import {FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AddSection from './components/addSection'
+import SectionItem from './components/sectionItem'
 
 function HomeScreen({navigation}) { //homeScreen
   return (
     <View style={styles.container}>
+    <ScrollView>
       <Text>Welcome!</Text>
       <Text>To start building your portfolio, press Start.</Text>
       <Button 
         title = "Start"
-        onPress={() => navigation.navigate('Portfolio Builder')}
+        onPress={() => navigation.navigate('Portfolio List')}
       />
+      </ScrollView>
     </View>
   );
 }
 
-function PortfolioBuilder({navigation})
+function PortfolioList({navigation})
 {
+  const [portfolios, setPortfolio] = useState([
+    { name: 'Portfolio 1', key: '1'},
+    { name: 'Portfolio 2', key: '2'},
+  ]);
+
+  
+
+  
+
   return(
+    
     <View style = {styles.container}>
+    <ScrollView>
+    
+    { portfolios.map((item) => {
+      return (
+        <View key = {item.key}>
+          <TouchableOpacity onPress={() => navigation.navigate('Portfolio 1 Builder')}>
+            <Text style={styles.portfolioButtonText}>{item.name}</Text>
+          </TouchableOpacity>
+        </View>
+      )
+    })}
+
+    
+    
       <Text>This will be the list of all the user's portfolios.</Text>
       <Text>User can click on one portfolio and start adding/removing sections and editing.</Text>
       <Text>Most likely will add a custom button component to display a portfolio.</Text>
       <Text>Add ScrollView as well and list component.</Text>
+      </ScrollView>
+    </View>
+    
+  );
+}
+
+function Portfolio1Builder({navigation})
+{
+
+  const [sections, setSection] = useState([
+    { name: 'Personal Info', key: '1'},
+  ])
+
+  return (
+    <View style={styles.container}>
+    <AddSection /> 
+      <View style = {styles.content}>
+        <View style = {styles.list}>
+          <FlatList 
+            data={sections}
+            renderItem={({item}) => (
+              <Text>{item.name}</Text>
+            )}  
+          />
+        </View>
+      </View>
+      
     </View>
   );
+}
+
+function PersonalInfo({navigation})
+{
+  return(
+    <View>
+      <ScrollView>
+        <Text>About me!</Text>
+      </ScrollView>
+    </View>
+  )
 }
 
 const Stack = createNativeStackNavigator();
@@ -49,11 +115,15 @@ export default function App() {
     setUserInfo({firstName: 'Jeff', lastName: 'Doe', email: 'johndoe@hotmail.com', phoneNum: 2224568765, address: '9110 Trenton Way' });
   } */
 
+  
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name = "Portfolio Builder" component={PortfolioBuilder} />
+        <Stack.Screen name = "Portfolio List" component={PortfolioList} />
+        <Stack.Screen name = "Portfolio 1 Builder" component={Portfolio1Builder}/>
+        <Stack.Screen name = "Personal Info" component={PersonalInfo}/>
       </Stack.Navigator>
     </NavigationContainer>
    
@@ -95,9 +165,39 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
+   // alignItems: 'center',
+   // justifyContent: 'center',
+  },
+
+  portfolioButtonText: {
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 20,
+    padding: 20,
+    backgroundColor: '#FFF5F3',
+    fontSize: 24,
+    borderWidth: 3,
+    borderColor: '#6D6D6D',
   },
+
+  content: {
+    padding: 40,
+
+  },
+  list: {
+    marginTop: 20,
+
+  },
+
+ /* item: {
+    marginTop: 24,
+    padding: 30,
+    backgroundColor: '#FFF5F3',
+    fontSize: 24,
+    borderWidth: 3,
+    borderColor: '#6D6D6D',
+
+  }, */
 
   buttonContainer: {
     marginTop: 20,

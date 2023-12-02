@@ -6,11 +6,15 @@
 import React, {useState} from 'react';
 
 // import {StatusBar} from 'expo-status-bar'
-import {FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity} from 'react-native';
+import {TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {Ionicons, MaterialIcons, AntDesign} from '@expo/vector-icons';
 import AddSection from './components/addSection'
 import SectionItem from './components/sectionItem'
+import Sandbox from './components/sandbox'
+
+
 
 function HomeScreen({navigation}) { //homeScreen
   return (
@@ -47,7 +51,10 @@ function PortfolioList({navigation})
       return (
         <View key = {item.key}>
           <TouchableOpacity onPress={() => navigation.navigate('Portfolio 1 Builder')}>
-            <Text style={styles.portfolioButtonText}>{item.name}</Text>
+          <View style = {styles.portfolioButton}>
+            <AntDesign name = 'rightcircleo' size={30} />
+            <Text style = {styles.portfolioButtonText} >{item.name}</Text>
+          </View>
           </TouchableOpacity>
         </View>
       )
@@ -70,7 +77,7 @@ function Portfolio1Builder({navigation})
 
   const [sections, setSection] = useState([
     { name: 'Personal Info', key: '1'},
-    { name: 'Sports', key: '2'},
+    { name: 'Athletic Achievements', key: '2'},
   ])
 
   return (
@@ -81,7 +88,7 @@ function Portfolio1Builder({navigation})
           <FlatList 
             data={sections}
             renderItem={({item}) => (
-              <TouchableOpacity onPress={() => navigation.navigate('Personal Info')}>
+              <TouchableOpacity onPress={() => navigation.navigate(item.name)}>
                 <Text>{item.name}</Text>
               </TouchableOpacity>
             )}  
@@ -99,35 +106,83 @@ function PersonalInfo({navigation})
     {firstName: '', lastName: '', address: '', phoneNum: '', email: '' }
   ])
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [addres, setAddress] = useState('');
-
+  const [firstName, setFirstName] = useState();
+  const [lastName, setLastName] = useState();
+  const [addres, setAddress] = useState();
+  const [phoneNum, setPhoneNum] = useState();
+  const [email, setEmail] = useState();
 
 
 
   return(
+  //  <Sandbox />
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss();
+      console.log('keyboard dismissed');
+    }}>
     <View>
       <ScrollView>
         <View style = {styles.personalInfoText}>
-        <Text >My first name is ...</Text>
+        <Text >What is your name?</Text>
         <TextInput 
-        style = {styles.personalInfoText}
+        style = {styles.input}
         placeholder = 'First Name'
         onChangeText={(val) => setFirstName(val)}
         />
-        <Text >My last name is..</Text>
         <TextInput 
-        style = {styles.personalInfoText}
+        style = {styles.input}
         placeholder = 'Last Name'
         onChangeText={(val) => setLastName(val)}
         />
+        <Text >Address: </Text>
+        <TextInput 
+        style = {styles.input}
+        placeholder = '123 Example Way, Example City, FL, 12345'
+        onChangeText={(val) => setAddress(val)}
+        />
+        <Text >Phone Number: </Text>
+        <TextInput 
+        style = {styles.input}
+        placeholder='1234567890'
+        maxLength={10}
+        multiline={false}
+        onChangeText={(val) => setPhoneNum(val)}
+        />
+        <Text>Email: </Text>
+        <TextInput
+          style = {styles.input}
+          placeholder =  'johndoe@example.com'
+          onChangeText={(val) => setEmail(val)}
+          />
+
 
         </View>
       </ScrollView>
     </View>
+  </TouchableWithoutFeedback>
   )
 }
+
+function AthleticAchievements({navigation})
+{
+  const[sportsNames, setSportsNames] = useState([]);
+
+  const addSportName = (newName) => {
+    setSportsNames([...sportsNames, newName]);
+  };
+
+ 
+  <View>
+    <Text>
+     
+    </Text>
+  </View>
+}
+
+
+
+
+
 
 const Stack = createNativeStackNavigator();
 
@@ -152,6 +207,8 @@ export default function App() {
         <Stack.Screen name = "Portfolio List" component={PortfolioList} />
         <Stack.Screen name = "Portfolio 1 Builder" component={Portfolio1Builder}/>
         <Stack.Screen name = "Personal Info" component={PersonalInfo}/>
+        <Stack.Screen name = "Athletic Achievements" component={AthleticAchievements}/>
+        
       </Stack.Navigator>
     </NavigationContainer>
    
@@ -213,19 +270,32 @@ const styles = StyleSheet.create({
 
   personalInfoText: {
     padding: 20,
+    flex: 1,
+    
   },
 
 
 
-  portfolioButtonText: {
+  portfolioButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
-    padding: 20,
+    marginTop: 16,
+    padding: 16,
     backgroundColor: '#FFF5F3',
     fontSize: 24,
     borderWidth: 3,
     borderColor: '#6D6D6D',
+    borderRadius: 15,
+    flexDirection: 'row-reverse',
+    
+  },
+
+  portfolioButtonText: {
+    flex: 1,
+    paddingLeft: 70,
+    textAlign: 'left',
+    fontSize: 30,
+    
   },
 
   content: {
@@ -266,6 +336,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#777',
+    borderRadius: 15,
     padding: 8,
     margin: 10,
     width: 200,

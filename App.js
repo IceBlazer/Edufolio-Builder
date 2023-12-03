@@ -310,7 +310,7 @@ function SportsForm({addSport})
       >
         {(props) => (
           <KeyboardAwareScrollView>
-            <Text style = {{marginTop: 5}}>Sport Name</Text>
+            <Text style = {{marginTop: 5}}>Sport Name: </Text>
             <TextInput 
               style={styles.formikInput}
               placeholder='Sport Name '
@@ -337,10 +337,10 @@ function SportsForm({addSport})
               onBlur={props.handleBlur('endDate')} 
             />
             <Text style = {styles.errorText}>{props.touched.endDate && props.errors.endDate}</Text>
-            <Text style = {{marginTop: 5}}>Average Number of Hours Player Per Week:</Text>
+            <Text style = {{marginTop: 5}}>Average Number of Hours Played Per Week:</Text>
             <TextInput 
               style={styles.formikInput}
-              placeholder='Average Number of Hours Played per Week: '
+              placeholder='Average Number of Hours Played Per Week: '
               onChangeText={props.handleChange('avgHrsPerWeek')}
               value={props.values.avgHrsPerWeek}
               keyboardType='numeric'
@@ -419,7 +419,7 @@ function SportInfo({route,navigation})
 function Education({navigation})
 {
   const [educations, setEducations] = useState([
-    {schoolName: 'ETES', Location: '900 Stribling Way', beginningGrade: '9', tartDate: '2021/3/12', endDate: '2022/5/12', comments: 'idk'},
+    {schoolName: 'ETES', Location: '900 Stribling Way', beginningGrade: '9', startDate: '2021/3/12', endDate: '2022/5/12', comments: 'idk', key: '1'},
 
   ])
   const addEducation = (education) => {
@@ -473,7 +473,6 @@ function Education({navigation})
     </Modal>
     <ScrollView>
       <Text>
-      School Name, Location, Beginning Grade, Start Date, End Date, Comments
         <View style = {{paddingLeft: 170, paddingTop: 20}}>
         <TouchableOpacity>
           <Ionicons 
@@ -514,7 +513,7 @@ function EducationsForm({addEducation})
       >
       {(props) => (
           <KeyboardAwareScrollView>
-            <Text style = {{marginTop: 5}}>School Name</Text>
+            <Text style = {{marginTop: 5}}>School Name: </Text>
             <TextInput 
               style={styles.formikInput}
               placeholder='School Name: '
@@ -524,7 +523,7 @@ function EducationsForm({addEducation})
             />
             <Text style = {styles.errorText}>{props.touched.schoolName && props.errors.schoolName}</Text>
 
-            <Text style = {{marginTop: 5}}>Location</Text>
+            <Text style = {{marginTop: 5}}>Location: </Text>
             <TextInput 
               style={styles.formikInput}
               placeholder='Location: '
@@ -611,7 +610,7 @@ function EducationInfo({route, navigation})
 function VolunteerServices({navigation})
 {
   const [volunteerServices, setVolunteerServices] = useState([
-    {positionTitle: 'Helper', organization: 'Target', location: '', startDate: '', endDate: '', totalHrs: '', gradesParticipated: '', comments: ''},
+    {positionTitle: 'Helper', organization: 'Target', location: '', startDate: '', endDate: '', totalHrs: '', gradesParticipated: '', comments: '', key: '1'},
 
   ])
   const addVolunteerServices = (volunteerService) => {
@@ -826,6 +825,214 @@ function VolunteerServicesInfo({route, navigation})
   );
 }
 
+function EC({navigation})
+{
+  const [ecs, setECS] = useState([
+    {activity: 'Taekwondo', startDate: '2021/3/12', endDate: '2022/5/12', avgHrsPerWeek: '4', totalHrs: '234', gradesParticipated: '9, 10, 11', comments: "i'm bruce lee", key: '1'},
+
+  ])
+  const addEC = (ec) => {
+    ec.key = Math.random().toString();
+    setECS((currentEC) => {
+      return [ec, ...currentEC]
+    });
+    setModalOpen(false);
+  }
+  const [modalOpen, setModalOpen] = useState(false);
+
+  return(
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss();
+      console.log('keyboard dismissed');
+    }}>
+  <View>
+    <FlatList
+      data={ecs}
+      renderItem={({item}) =>(
+        <Card>
+        <TouchableOpacity onPress={() => navigation.navigate('Extracurricular Activities Info', {item})}>
+        <View style = {styles.rightIcon}>
+        <AntDesign name = 'right' size={30} />
+          <Text style={styles.sectionInfoCard}>
+            {item.activity}
+          </Text>
+        </View>
+        </TouchableOpacity>
+        </Card>
+      )}
+     />
+     <Modal visible={modalOpen} animationType='slide'>
+    <ScrollView>
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss();
+      console.log('keyboard dismissed');
+    }}>
+      <View style={styles.modalContent}>
+        <MaterialIcons 
+              name="close" 
+              size={50} 
+              color="black"
+              style={{...styles.modalToggle, ...styles.modalClose}}
+              onPress={() => setModalOpen(false)} 
+          />
+        <ECSForm addEC={addEC} />
+      </View>
+      </TouchableWithoutFeedback>
+      </ScrollView>
+    </Modal>
+    <ScrollView>
+      <Text>
+        <View style = {{paddingLeft: 170, paddingTop: 20}}>
+        <TouchableOpacity>
+          <Ionicons 
+            name="md-add-circle-outline" 
+            size={50} 
+            color="black"
+            style={styles.modalToggle}
+            onPress={() => setModalOpen(true)}
+             />
+          </TouchableOpacity>
+        
+        </View>
+      </Text>
+    </ScrollView>
+  </View>
+  </TouchableWithoutFeedback>
+  )
+}
+
+function ECSForm({addEC})
+{
+  const ECSchema = yup.object({
+    activity: yup.string().required('This field is required.').min(3, 'Must be at least 3 characters'),
+    startDate: yup.date().required('This field is required.').max(new Date()),
+    endDate: yup.date().max(new Date()),
+    avgHrsPerWeek: yup.number().required('This field is required.').positive().max(168, 'Must be less than 168'),
+    totalHrs: yup.number().required('This field is required.').positive(),
+    gradesParticipated: yup.string().required('This field is required.'),
+    comments: yup.string()
+
+    
+  })
+
+  return(
+    <View>
+      <Formik
+        initialValues={{ activity: '', startDate: '', endDate: '', avgHrsPerWeek: '', totalHrs: '', gradesParticipated: '', comments: ''}}
+        validationSchema={sportsSchema}
+        onSubmit={(values) => {
+          console.log(values);
+          addEC(values);
+        }}
+      >
+      {(props) => (
+          <KeyboardAwareScrollView>
+            <Text style = {{marginTop: 5}}>Activity: </Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Activity: '
+              onChangeText={props.handleChange('activity')}
+              value={props.values.activity}
+              onBlur={props.handleBlur('activity')}
+            />
+            <Text style = {styles.errorText}>{props.touched.activity && props.errors.activity}</Text>
+            <Text style = {{marginTop: 5}}>Start Date: (YYYY-MM-DD)</Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Start Date: (YYYY-MM-DD) '
+              onChangeText={props.handleChange('startDate')}
+              value={props.values.startDate}
+              onBlur={props.handleBlur('startDate')}
+            />
+            <Text style = {styles.errorText}>{props.touched.startDate && props.errors.startDate}</Text>
+            <Text style = {{marginTop: 5}}>End Date: (YYYY-MM-DD)</Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='End Date: (YYYY-MM-DD) '
+              onChangeText={props.handleChange('endDate')}
+              value={props.values.endDate}
+              onBlur={props.handleBlur('endDate')} 
+            />
+            <Text style = {styles.errorText}>{props.touched.endDate && props.errors.endDate}</Text>
+            <Text style = {{marginTop: 5}}>Average Number of Hours Per Week:</Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Average Number of Hours Per Week: '
+              onChangeText={props.handleChange('avgHrsPerWeek')}
+              value={props.values.avgHrsPerWeek}
+              keyboardType='numeric'
+              onBlur={props.handleBlur('avgHrsPerWeek')}
+            />
+            <Text style = {styles.errorText}>{props.touched.avgHrsPerWeek && props.errors.avgHrsPerWeek}</Text>
+            <Text style = {{marginTop: 5}}>Total Hours: </Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Total Hours: '
+              onChangeText={props.handleChange('totalHrs')}
+              value={props.values.totalHrs}
+              onBlur={props.handleBlur('totalHrs')}
+              keyboardType='numeric'
+            />
+            <Text style = {styles.errorText}>{props.touched.totalHrs && props.errors.totalHrs}</Text>
+            <Text style = {{marginTop: 5}}>Grades Participated: </Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Grades Participated: '
+              onChangeText={props.handleChange('gradesParticipated')}
+              value={props.values.gradesParticipated}
+              onBlur={props.handleBlur('gradesParticipated')}
+            />
+            <Text style = {styles.errorText}>{props.touched.gradesParticipated && props.errors.gradesParticipated}</Text>
+            <TextInput 
+              style={styles.formikInput}
+              multiline
+              placeholder='Comments: '
+              onChangeText={props.handleChange('comments')}
+              value={props.values.comments}
+              onBlur={props.handleBlur('comments')}
+            />
+            <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
+
+            
+            <Button title='Submit' onPress={props.handleSubmit} />
+          </KeyboardAwareScrollView>
+        )}
+      </Formik>
+    </View>
+  )
+}
+
+function ECInfo({route, navigation})
+{
+  const {item} = route.params;
+
+  
+
+  return(
+    <View>
+    <Card>
+      <View>
+      <View style = {styles.rightIcon}>
+            <TouchableOpacity>
+          <MaterialIcons name = 'delete' size={30} color = "red" />
+          </TouchableOpacity>
+        </View>
+        <Text>Activity Name: {item.activity}</Text>
+        <Text>Start Date: {item.startDate}</Text>
+        <Text>End Date: {item.endDate} </Text>
+        <Text>Average Hours Per Week: {item.avgHrsPerWeek} </Text>
+        
+        <Text>Total Hours: {item.totalHrs}</Text>
+        <Text>Grades Participated: {item.gradesParticipated}</Text>
+        <Text>Comments: {item.comments} </Text>
+
+      </View>
+    </Card>
+    </View>
+    
+  );
+}
+
 
 /*function HeaderBar({navigation}) {
   return (
@@ -877,6 +1084,8 @@ export default function App() {
         <Stack.Screen name = "Education Info" component={EducationInfo}/>
         <Stack.Screen name = "Volunteer Services" component={VolunteerServices}/>
         <Stack.Screen name = "Volunteer Services Info" component={VolunteerServicesInfo}/>
+        <Stack.Screen name = "Extracurricular Activities" component={EC}/>
+        <Stack.Screen name = "Extracurricular Activities Info" component={ECInfo}/>
         
       </Stack.Navigator>
     </NavigationContainer>

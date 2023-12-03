@@ -34,6 +34,10 @@ function HomeScreen({navigation}) { //homeScreen
         title = "Start"
         onPress={() => navigation.navigate('Portfolio List')}
       />
+      <Text style = {{fontWeight: 'bold'}}>Todo List: </Text>
+      <Text style = {{fontWeight: 'bold'}}>- Add delete function for the cards in the sections</Text>
+      <Text style = {{fontWeight: 'bold'}}>- Implement add sections and make sections hide unless selected by the user to include in the portfolio</Text>
+      <Text style = {{fontWeight: 'bold'}}>- Make app look good</Text>
       </ScrollView>
     </View>
   );

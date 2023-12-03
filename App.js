@@ -38,8 +38,10 @@ function HomeScreen({navigation}) { //homeScreen
       <Text style = {{fontWeight: 'bold'}}>- Implement add sections and make sections hide unless selected by the user to include in the portfolio</Text>
       <Text style = {{fontWeight: 'bold'}}>- Add function to generate portfolio somehow</Text>
       <Text style = {{fontWeight: 'bold'}}>- Add delete function for the cards in the sections</Text>
-      
       <Text style = {{fontWeight: 'bold'}}>- Make app look good</Text>
+      <Text style = {{fontWeight: 'bold'}}>- Create App Icon and Include Images</Text>
+      <Text style = {{fontWeight: 'bold'}}>- Add at least 2 social media app connections in the about me section</Text>
+      <Text style = {{fontWeight: 'bold'}}>- Add delete function for the cards in the sections</Text>
 
       </ScrollView>
     </View>

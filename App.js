@@ -3,23 +3,34 @@
 //To stop server do: CTRL+C
 //To close an existing server do: "netstat -ano | findstr :<PORT NUMBER BEING TAKEN>" and then do: "taskkill /PID <GIVEN LISTENING PID> /F"
 
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 // import {StatusBar} from 'expo-status-bar'
-import {KeyboardAvoidingView, Modal, Dimensions, TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity} from 'react-native';
+import { Linking, Platform, ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Dimensions, TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {Ionicons, MaterialIcons, AntDesign, Feather} from '@expo/vector-icons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Formik} from 'formik';
 import * as yup from 'yup';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import AddSection from './components/addSection'
 import SectionItem from './components/sectionItem'
 import Sandbox from './components/sandbox'
 import Header from './shared/header';
+import AppLoading from "expo-app-loading";
 
 
-
+function Card(props)
+{
+    return(
+        <View style={styles.card}>
+            <View style={styles.cardContent}>
+                {props.children}
+            </View>
+        </View>
+    )
+}
 
 
 function HomeScreen({navigation}) { //homeScreen
@@ -145,13 +156,25 @@ function PersonalInfo({navigation}) //Personal Info Screen
     {firstName: '', lastName: '', address: '', phoneNum: '', email: '' }
   ])
 
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLastName] = useState();
-  const [addres, setAddress] = useState();
-  const [phoneNum, setPhoneNum] = useState();
-  const [email, setEmail] = useState();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [address, setAddress] = useState('');
+  const [phoneNum, setPhoneNum] = useState('');
+  const [email, setEmail] = useState('');
 
-
+  // const saveData = async() => {
+  //   const url = "http://localhost:3000/users\heman\FBLA_app\personalInfo.json";
+  //   let result = await fetch(url,{
+  //     method:"POST",
+  //     headers: {"Content-Type":"application/json"},
+  //     body:JSON.stringify({firstName, lastName, address, phoneNum, email})
+  //   });
+  //   result = await result.json();
+  //   if(result){
+  //     console.warn("Data is added");
+  //    }
+  
+  // }
 
   return(
   //  <Sandbox />
@@ -165,7 +188,7 @@ function PersonalInfo({navigation}) //Personal Info Screen
         <Text >What is your name?</Text>
         <TextInput 
         style = {styles.input}
-        placeholder = 'First Name'
+        placeholder = 'First Name' 
         onChangeText={(val) => setFirstName(val)}
         />
         <TextInput 
@@ -195,7 +218,7 @@ function PersonalInfo({navigation}) //Personal Info Screen
           />
 
 
-
+        <Button title ="Submit" onPress={saveData} />
         </View>
       </ScrollView>
     </View>
@@ -203,102 +226,118 @@ function PersonalInfo({navigation}) //Personal Info Screen
   )
 }
 
-function AthleticAchievements({navigation}) //Athletic Achievement Screen
-{
+ 
 
-  const [sports, setSports] = useState([
-    {sportName: 'Soccer', startDate: '2021/3/12', endDate: '2022/5/12', avgHrsPerWeek: '3', totalHrs: '123', gradesParticipated: '6, 7, 8', comments: "i'm himothy", key: '1'},
 
-  ])
-  const addSport = (sport) => {
-    sport.key =  Math.random().toString();
-    setSports((currentSports) => {
-      return [sport, ...currentSports]
-    });
-    setModalOpen(false);
-  }
+
+function AthleticAchievements({ navigation }) {
+  const [sports, setSports] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
 
-  
+  useEffect(() => {
+    loadSports(); // Load sports when the component mounts
+  }, []); // Empty dependency array ensures it runs only once on mount
 
-  return(
-    <TouchableWithoutFeedback onPress={() => {
-      Keyboard.dismiss();
-      console.log('keyboard dismissed');
-    }}>
-  <View>
-    <FlatList
-      data={sports}
-      renderItem={({item}) =>(
-        <Card>
-        <TouchableOpacity onPress={() => navigation.navigate('Sport Info', {item})}>
-        <View style = {styles.rightIcon}>
-        <AntDesign name = 'right' size={30} />
-          <Text style={styles.sectionInfoCard}>
-            {item.sportName}
-          </Text>
-        </View>
-        </TouchableOpacity>
-        </Card>
-      )}
-     />
-    <Modal visible={modalOpen} animationType='slide'>
-    <ScrollView>
-    <TouchableWithoutFeedback onPress={() => {
-      Keyboard.dismiss();
-      console.log('keyboard dismissed');
-    }}>
-      <View style={styles.modalContent}>
-        <MaterialIcons 
-              name="close" 
-              size={50} 
-              color="black"
-              style={{...styles.modalToggle, ...styles.modalClose}}
-              onPress={() => setModalOpen(false)} 
-          />
-        <SportsForm addSport={addSport} />
-      </View>
-      </TouchableWithoutFeedback>
-      </ScrollView>
-    </Modal>
-    <ScrollView>
-      <Text>
-      Sport Name, Start Date, End Date, Average Hours per Week, Total Hours, Grades Participated, Description/Comments
-        <View style = {{paddingLeft: 170, paddingTop: 20}}>
-        <TouchableOpacity>
-          <Ionicons 
-            name="md-add-circle-outline" 
-            size={50} 
-            color="black"
-            style={styles.modalToggle}
-            onPress={() => setModalOpen(true)}
-             />
-          </TouchableOpacity>
-        
-        </View>
-      </Text>
-    </ScrollView>
-  </View>
-  </TouchableWithoutFeedback>
-  )
-}
+  const loadSports = async () => {
+    console.log("load sports called");
+    try {
+      const storedSports = await AsyncStorage.getItem("storedSports");
+      if (storedSports !== null) {
+        setSports(JSON.parse(storedSports));
+      }
+    } catch (e) {
+      alert('Failed to fetch the input from storage: ' + e);
+    }
+  };
 
-function Card(props)
-{
-    return(
-        <View style={styles.card}>
-            <View style={styles.cardContent}>
-                {props.children}
+  const addSport = async (sport) => {
+    sport.key = Math.random().toString();
+    const newSports = [...sports, sport];
+
+    try {
+      await AsyncStorage.setItem("storedSports", JSON.stringify(newSports));
+      setSports(newSports);
+      setModalOpen(false);
+      console.log({ sports: newSports });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClearSports = async () => {
+    try {
+      await AsyncStorage.setItem("storedSports", JSON.stringify([]));
+      setSports([]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View>
+        <FlatList
+          data={sports}
+          renderItem={({ item }) => (
+            <Card>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Sport Info', { item })}
+              >
+                <View style={styles.rightIcon}>
+                  <AntDesign name="right" size={30} />
+                  <Text style={styles.sectionInfoCard}>{item.sportName}</Text>
+                </View>
+              </TouchableOpacity>
+            </Card>
+          )}
+        />
+        <Modal visible={modalOpen} animationType="slide">
+          <ScrollView>
+            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+              <View style={styles.modalContent}>
+                <MaterialIcons
+                  name="close"
+                  size={50}
+                  color="black"
+                  style={{ ...styles.modalToggle, ...styles.modalClose }}
+                  onPress={() => setModalOpen(false)}
+                />
+                <SportsForm addSport={addSport} />
+              </View>
+            </TouchableWithoutFeedback>
+          </ScrollView>
+        </Modal>
+        <ScrollView>
+          <Text>
+            Sport Name, Start Date, End Date, Average Hours per Week, Total
+            Hours, Grades Participated, Description/Comments
+            <View style={{ paddingLeft: 170, paddingTop: 20 }}>
+              <TouchableOpacity>
+                <Ionicons
+                  name="md-add-circle-outline"
+                  size={50}
+                  color="black"
+                  style={styles.modalToggle}
+                  onPress={() => setModalOpen(true)}
+                />
+              </TouchableOpacity>
             </View>
-        </View>
-    )
+          </Text>
+        </ScrollView>
+      </View>
+    </TouchableWithoutFeedback>
+  );
 }
-function SportsForm({addSport})
+
+
+
+
+function SportsForm({addSport}, {sports})
 {
   const sportsSchema = yup.object({
     sportName: yup.string().required('This field is required.').min(3, 'Must be at least 3 characters'),
     startDate: yup.date().required('This field is required.').max(new Date()),
-    endDate: yup.date().max(new Date()),
+    endDate: yup.date().required("If still continuing, put today's date.").max(new Date()),
     avgHrsPerWeek: yup.number().required('This field is required.').positive().max(168, 'Must be less than 168'),
     totalHrs: yup.number().required('This field is required.').positive(),
     gradesParticipated: yup.string().required('This field is required.'),
@@ -306,6 +345,30 @@ function SportsForm({addSport})
 
     
   })
+
+  // const save = async() => {
+  //   try{
+  //     await AsyncStorage.setItem("SportKey", sports)
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
+  // const load = async () =>{
+  //   try {
+  //     let sport = await AsyncStorage.getItem("SportKey");
+  //     if(sport != null){
+
+  //       setSports(sport);
+  //     }
+  //   } catch(err) {
+  //     console.log(err);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   load();
+  // }, []);
 
   return(
     <View>
@@ -315,6 +378,7 @@ function SportsForm({addSport})
         onSubmit={(values) => {
           console.log(values);
           addSport(values);
+          //{save}
         }}
       >
         {(props) => (
@@ -328,6 +392,7 @@ function SportsForm({addSport})
               onBlur={props.handleBlur('sportName')}
             />
             <Text style = {styles.errorText}>{props.touched.sportName && props.errors.sportName}</Text>
+
             <Text style = {{marginTop: 5}}>Start Date: (YYYY-MM-DD)</Text>
             <TextInput 
               style={styles.formikInput}
@@ -428,7 +493,7 @@ function SportInfo({route,navigation})
 function Education({navigation})
 {
   const [educations, setEducations] = useState([
-    {schoolName: 'ETES', Location: '900 Stribling Way', beginningGrade: '9', startDate: '2021/3/12', endDate: '2022/5/12', comments: 'idk', key: '1'},
+    {schoolName: 'ETES', location: '900 Stribling Way', beginningGrade: '9', startDate: '2021/3/12', endDate: '2022/5/12', comments: 'idk', key: '1'},
 
   ])
   const addEducation = (education) => {
@@ -1042,6 +1107,190 @@ function ECInfo({route, navigation})
   );
 }
 
+function AwardsCertificates({navigation})
+{
+  const[acs, setACS] = useState([
+    {awardName: '', dateReceived: '', gradesReceived: '', comments: '', key: '1' }
+
+  ])
+  const addAC = (ac) => {
+    ac.key = Math.random().toString();
+    setACS((currACS) => {
+      return [acs, ...currACS]
+    });
+    setModalOpen(false);
+  }
+  const [modalOpen, setModalOpen] = useState(false);
+
+  return(
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss();
+      console.log('keyboard dismissed');
+    }}>
+  <View>
+    <FlatList
+      data={acs}
+      renderItem={({item}) =>(
+        <Card>
+        <TouchableOpacity onPress={() => navigation.navigate('Awards/Certificates Info', {item})}>
+        <View style = {styles.rightIcon}>
+        <AntDesign name = 'right' size={30} />
+          <Text style={styles.sectionInfoCard}>
+            {item.awardName}
+          </Text>
+        </View>
+        </TouchableOpacity>
+        </Card>
+      )}
+     />
+     <Modal visible={modalOpen} animationType='slide'>
+    <ScrollView>
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss();
+      console.log('keyboard dismissed');
+    }}>
+      <View style={styles.modalContent}>
+        <MaterialIcons 
+              name="close" 
+              size={50} 
+              color="black"
+              style={{...styles.modalToggle, ...styles.modalClose}}
+              onPress={() => setModalOpen(false)} 
+          />
+        <ACSForm addAC={addAC} />
+      </View>
+      </TouchableWithoutFeedback>
+      </ScrollView>
+    </Modal>
+    <ScrollView>
+      <Text>
+        <View style = {{paddingLeft: 170, paddingTop: 20}}>
+        <TouchableOpacity>
+          <Ionicons 
+            name="md-add-circle-outline" 
+            size={50} 
+            color="black"
+            style={styles.modalToggle}
+            onPress={() => setModalOpen(true)}
+             />
+          </TouchableOpacity>
+        
+        </View>
+      </Text>
+    </ScrollView>
+  </View>
+  </TouchableWithoutFeedback>
+  )
+
+}
+
+function ACSForm({addAC})
+{
+  const acsSchema = yup.object({
+    awardName: yup.string().required('This field is required.').min(3, 'Must be at least 3 characters'),
+    dateReceived: yup.date().required('This field is required.').max(new Date()),
+    gradesParticipated: yup.string().required('This field is required.'),
+    comments: yup.string()
+  })
+  return(
+    <View>
+      <Formik
+        initialValues={{ awardName: '', dateReceived: '', gradesReceived: '', comments: ''}}
+        validationSchema={acsSchema}
+        onSubmit={(values) => {
+          console.log(values);
+          addAC(values);
+        }}
+      >
+      {(props) => (
+        <KeyboardAwareScrollView>
+            <Text style = {{marginTop: 5}}>Award Name: </Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Award Name: '
+              onChangeText={props.handleChange('awardName')}
+              value={props.values.awardName}
+              onBlur={props.handleBlur('awardName')}
+            />
+            <Text style = {styles.errorText}>{props.touched.awardName && props.errors.awardName}</Text>
+            <Text style = {{marginTop: 5}}>Date Received: (YYYY-MM-DD)</Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Date Received: (YYYY-MM-DD) '
+              onChangeText={props.handleChange('dateReceived')}
+              value={props.values.dateReceived}
+              onBlur={props.handleBlur('dateReceived')}
+            />
+            <Text style = {styles.errorText}>{props.touched.dateReceived && props.errors.dateReceived}</Text>
+
+            <Text style = {{marginTop: 5}}>Grades Received: </Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Grades Received: '
+              onChangeText={props.handleChange('gradesReceived')}
+              value={props.values.gradesReceived}
+              onBlur={props.handleBlur('gradesReceived')}
+            />
+            <Text style = {styles.errorText}>{props.touched.gradesReceived && props.errors.gradesReceived}</Text>
+            <TextInput 
+              style={styles.formikInput}
+              multiline
+              placeholder='Comments: '
+              onChangeText={props.handleChange('comments')}
+              value={props.values.comments}
+              onBlur={props.handleBlur('comments')}
+            />
+            <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
+            <Button title='Submit' onPress={props.handleSubmit} />
+          </KeyboardAwareScrollView>
+    
+      )}
+      </Formik>
+    </View>
+  )
+}
+
+function AwardsCertificatesInfo({route, navigation})
+{
+  const {item} = route.params;
+
+  
+
+  return(
+    <View>
+    <Card>
+      <View>
+      <View style = {styles.rightIcon}>
+            <TouchableOpacity onPress={()=>Alert.alert(
+              'Are you sure you want to delete this?',
+              'You cannot undo this action.',
+              [
+                {
+                  text: 'No',
+                  onPress: () => console.log('Cancelled'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => console.log('Deleted'),
+                }
+              ], 
+              { cancelable: 'false'}
+            )}>
+          <MaterialIcons name = 'delete' size={30} color = "red" />
+          </TouchableOpacity>
+        </View>
+        <Text>Award Name: {item.awardName}</Text>
+        <Text>Date Received: {item.dateReceived}</Text>
+        <Text>Grades Received: {item.gradesReceived}</Text>
+        <Text>Comments: {item.comments} </Text>
+        </View>
+    </Card>
+    </View>
+    
+  );
+}
+
 
 /*function HeaderBar({navigation}) {
   return (
@@ -1070,22 +1319,22 @@ export default function App() {
     setUserInfo({firstName: 'Jeff', lastName: 'Doe', email: 'johndoe@hotmail.com', phoneNum: 2224568765, address: '9110 Trenton Way' });
   } */
   
-  
-
+    
   return (
     
     <NavigationContainer>
       <Stack.Navigator >
         <Stack.Screen 
           name = "Home" 
-          component={HomeScreen} 
+          component={HomeScreen}
+          options={{ headerTitle: (props) => <Header {...props} />, headerBackTitleVisible: false}}
         />
         <Stack.Screen name = "Portfolio List" component={PortfolioList} />
         <Stack.Screen name = "Portfolio 1 Builder" component={Portfolio1Builder}/>
         <Stack.Screen 
           name = "Personal Info"
           component={PersonalInfo}
-          //options={{ headerTitle: (props) => <HeaderBar {...props} />, headerBackTitleVisible: false}}
+          //options={{ headerTitle: (props) => <Header {...props} />, headerBackTitleVisible: false}}
            />
         <Stack.Screen name = "Athletic Achievements" component={AthleticAchievements}/>
         <Stack.Screen name = "Sport Info" component={SportInfo}/>
@@ -1095,6 +1344,8 @@ export default function App() {
         <Stack.Screen name = "Volunteer Services Info" component={VolunteerServicesInfo}/>
         <Stack.Screen name = "Extracurricular Activities" component={EC}/>
         <Stack.Screen name = "Extracurricular Activities Info" component={ECInfo}/>
+        <Stack.Screen name = "Awards/Certificates" component ={AwardsCertificates}/>
+        <Stack.Screen name = "Awards/Certificates Info" component = {AwardsCertificatesInfo}/>
         
       </Stack.Navigator>
     </NavigationContainer>

@@ -2,13 +2,14 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {MaterialIcons, AntDesign, Feather} from '@expo/vector-icons';
 
+
 export default function Header() {
     return (
         <View style = {styles.header}>
-        {/*icon for header */}
+        {/* images goes here*/}
             <View>
                 <Text style = {styles.headerText}>
-                    Gazomezone
+                    Edufolio Builder
                 </Text>
             </View>
         </View>

@@ -3,16 +3,17 @@ import {StyleSheet, Text, View} from 'react-native';
 
 export default class Card extends Component
 {
-    render(props){
+    render(props)
+    {
         return(
             <View style={styles.card}>
                 <View style={styles.cardContent}>
                     {props.children}
                 </View>
             </View>
-        )
+        );
     }
-   
+    
 }
 
 const styles = StyleSheet.create({

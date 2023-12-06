@@ -273,6 +273,17 @@ function AthleticAchievements({ navigation }) {
     }
   };
 
+
+  const removeSport = async (sport) => {
+    try {
+      const newSports = sports.filter(item => item !== sport);
+
+      await AsyncStorage.setItem("storedSports", JSON.stringify(newSports));
+      setSports(newSports);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View>
@@ -283,6 +294,25 @@ function AthleticAchievements({ navigation }) {
               <TouchableOpacity
                 onPress={() => navigation.navigate('Sport Info', { item })}
               >
+              <TouchableOpacity onPress={()=>Alert.alert(
+              'Are you sure you want to delete this?',
+              'You cannot undo this action.',
+              [
+                {
+                  text: 'No',
+                  onPress: () => console.log('Cancelled'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => removeSport(item),
+                }
+              ], 
+              { cancelable: 'false'}
+            )}>
+                <MaterialIcons name = 'delete' size={30} color = "red"  /> 
+                {/* onPress={() => removeSport(item)} */}
+              </TouchableOpacity>
                 <View style={styles.rightIcon}>
                   <AntDesign name="right" size={30} />
                   <Text style={styles.sectionInfoCard}>{item.sportName}</Text>
@@ -309,8 +339,7 @@ function AthleticAchievements({ navigation }) {
         </Modal>
         <ScrollView>
           <Text>
-            Sport Name, Start Date, End Date, Average Hours per Week, Total
-            Hours, Grades Participated, Description/Comments
+            
             <View style={{ paddingLeft: 170, paddingTop: 20 }}>
               <TouchableOpacity>
                 <Ionicons
@@ -462,7 +491,7 @@ function SportsForm({addSport}, {sports})
 function SportInfo({route,navigation})
 {
   const {item} = route.params;
-
+  
   
 
   return(
@@ -470,9 +499,6 @@ function SportInfo({route,navigation})
     <Card>
       <View>
       <View style = {styles.rightIcon}>
-            <TouchableOpacity>
-          <MaterialIcons name = 'delete' size={30} color = "red" />
-          </TouchableOpacity>
         </View>
         <Text>Sport Name: {item.sportName}</Text>
         <Text>Start Date: {item.startDate}</Text>
@@ -658,6 +684,7 @@ function EducationsForm({addEducation})
 
 function EducationInfo({route, navigation})
 {
+  
   const {item} = route.params;
   return(
     <View>
@@ -1307,8 +1334,6 @@ function AwardsCertificatesInfo({route, navigation})
 
 const Stack = createNativeStackNavigator();
 
-
-export default function App() {
  /* const [name, setName] = useState('Harry');
   const [userInfo, setUserInfo] = useState({firstName: 'First Name', lastName: 'Last Name', email: 'user@example.com', phoneNum: 1234567890, address: '123 Sleepy Lane'});
   const [age, setAge] = useState(30); 
@@ -1318,7 +1343,9 @@ export default function App() {
     setAge('50');
     setUserInfo({firstName: 'Jeff', lastName: 'Doe', email: 'johndoe@hotmail.com', phoneNum: 2224568765, address: '9110 Trenton Way' });
   } */
-  
+export default function App() {
+
+
     
   return (
     
@@ -1336,7 +1363,7 @@ export default function App() {
           component={PersonalInfo}
           //options={{ headerTitle: (props) => <Header {...props} />, headerBackTitleVisible: false}}
            />
-        <Stack.Screen name = "Athletic Achievements" component={AthleticAchievements}/>
+        <Stack.Screen name = "Athletic Achievements"  component={AthleticAchievements}/>
         <Stack.Screen name = "Sport Info" component={SportInfo}/>
         <Stack.Screen name = "Education" component={Education}/>
         <Stack.Screen name = "Education Info" component={EducationInfo}/>

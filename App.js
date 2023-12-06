@@ -766,18 +766,53 @@ function EducationInfo({route, navigation})
 
 function VolunteerServices({navigation})
 {
-  const [volunteerServices, setVolunteerServices] = useState([
-    {positionTitle: 'Helper', organization: 'Target', location: '', startDate: '', endDate: '', totalHrs: '', gradesParticipated: '', comments: '', key: '1'},
+  // const [volunteerServices, setVolunteerServices] = useState([
+  //   {positionTitle: 'Helper', organization: 'Target', location: '', startDate: '', endDate: '', totalHrs: '', gradesParticipated: '', comments: '', key: '1'},
 
-  ])
-  const addVolunteerServices = (volunteerService) => {
-    volunteerService.key = Math.random().toString();
-    setVolunteerServices((currentVolunteerServices) => {
-      return [volunteerService, ...currentVolunteerServices]
-    });
-    setModalOpen(false);
-  }
+  // ])
+  const [volunteerServices,setVolunteerServices] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    loadVolunteerServices(); 
+  }, []); 
+
+  const loadVolunteerServices = async () => {
+    console.log("load VolunteerServices called");
+    try {
+      const storedVolunteerServices = await AsyncStorage.getItem("storedVolunteerServices");
+      if (storedVolunteerServices !== null) {
+        setVolunteerServices(JSON.parse(storedVolunteerServices));
+      }
+    } catch (e) {
+      alert('Failed to fetch the input from storage: ' + e);
+    }
+  };
+
+  const addVolunteerServices = async (volunteerService) => {
+    volunteerServices.key = Math.random().toString();
+    const newVolunteerServices = [...volunteerServices, volunteerService];
+
+    try {
+      await AsyncStorage.setItem("storedVolunteerServices", JSON.stringify(newVolunteerServices));
+      setVolunteerServices(newVolunteerServices);
+      setModalOpen(false);
+      console.log({ volunteerServices: newVolunteerServices });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const removeVolunteerService = async (volunteerService) => {
+    try {
+      const newVolunteerServices = volunteerServices.filter(item => item !== volunteerService);
+
+      await AsyncStorage.setItem("storedVolunteerServices", JSON.stringify(newVolunteerServices));
+      setVolunteerServices(newVolunteerServices);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+ 
 
   return(
     <TouchableWithoutFeedback onPress={() => {
@@ -790,6 +825,25 @@ function VolunteerServices({navigation})
       renderItem={({item}) =>(
         <Card>
         <TouchableOpacity onPress={() => navigation.navigate('Volunteer Services Info', {item})}>
+        <TouchableOpacity onPress={()=>Alert.alert(
+              'Are you sure you want to delete this?',
+              'You cannot undo this action.',
+              [
+                {
+                  text: 'No',
+                  onPress: () => console.log('Cancelled'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => removeVolunteerService(item),
+                }
+              ], 
+              { cancelable: 'false'}
+            )}>
+                <MaterialIcons name = 'delete' size={30} color = "red"  /> 
+               
+              </TouchableOpacity>
         <View style = {styles.rightIcon}>
         <AntDesign name = 'right' size={30} />
           <Text style={styles.sectionInfoCard}>
@@ -962,9 +1016,7 @@ function VolunteerServicesInfo({route, navigation})
     <Card>
       <View>
       <View style = {styles.rightIcon}>
-            <TouchableOpacity>
-          <MaterialIcons name = 'delete' size={30} color = "red" />
-          </TouchableOpacity>
+            
         </View>
         <Text>Position Title: {item.positionTitle}</Text>
         <Text>Organization: {item.organization} </Text>

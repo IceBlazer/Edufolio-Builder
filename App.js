@@ -235,8 +235,8 @@ function AthleticAchievements({ navigation }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    loadSports(); // Load sports when the component mounts
-  }, []); // Empty dependency array ensures it runs only once on mount
+    loadSports(); 
+  }, []); 
 
   const loadSports = async () => {
     console.log("load sports called");
@@ -518,19 +518,57 @@ function SportInfo({route,navigation})
 
 function Education({navigation})
 {
-  const [educations, setEducations] = useState([
-    {schoolName: 'ETES', location: '900 Stribling Way', beginningGrade: '9', startDate: '2021/3/12', endDate: '2022/5/12', comments: 'idk', key: '1'},
+  // const [educations, setEducations] = useState([
+  //   {schoolName: 'ETES', location: '900 Stribling Way', beginningGrade: '9', startDate: '2021/3/12', endDate: '2022/5/12', comments: 'idk', key: '1'},
 
-  ])
-  const addEducation = (education) => {
-    education.key = Math.random().toString();
-    setEducations((currentEducations) => {
-      return [education, ...currentEducations]
-    });
-    setModalOpen(false);
-  }
+  // ])
+  const [educations, setEducations] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
 
+
+  
+
+  useEffect(() => {
+    loadEducations(); 
+  }, []); 
+
+  const loadEducations = async () => {
+    console.log("load educations called");
+    try {
+      const storedEducations = await AsyncStorage.getItem("storedEducations");
+      if (storedEducations !== null) {
+        setEducations(JSON.parse(storedEducations));
+      }
+    } catch (e) {
+      alert('Failed to fetch the input from storage: ' + e);
+    }
+  };
+
+  const addEducation = async (education) => {
+    education.key = Math.random().toString();
+    const newEducations = [...educations, education];
+
+    try {
+      await AsyncStorage.setItem("storedEducations", JSON.stringify(newEducations));
+      setEducations(newEducations);
+      setModalOpen(false);
+      console.log({ educations: newEducations });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const removeEducation = async (education) => {
+    try {
+      const newEducations = educations.filter(item => item !== education);
+
+      await AsyncStorage.setItem("storedEducations", JSON.stringify(newEducations));
+      setEducations(newEducations);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
   return(
     <TouchableWithoutFeedback onPress={() => {
       Keyboard.dismiss();
@@ -541,7 +579,27 @@ function Education({navigation})
       data={educations}
       renderItem={({item}) =>(
         <Card>
+        
         <TouchableOpacity onPress={() => navigation.navigate('Education Info', {item})}>
+        <TouchableOpacity onPress={()=>Alert.alert(
+              'Are you sure you want to delete this?',
+              'You cannot undo this action.',
+              [
+                {
+                  text: 'No',
+                  onPress: () => console.log('Cancelled'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => removeEducation(item),
+                }
+              ], 
+              { cancelable: 'false'}
+            )}>
+                <MaterialIcons name = 'delete' size={30} color = "red"  /> 
+               
+              </TouchableOpacity>
         <View style = {styles.rightIcon}>
         <AntDesign name = 'right' size={30} />
           <Text style={styles.sectionInfoCard}>
@@ -691,9 +749,7 @@ function EducationInfo({route, navigation})
     <Card>
       <View>
       <View style = {styles.rightIcon}>
-            <TouchableOpacity>
-          <MaterialIcons name = 'delete' size={30} color = "red" />
-          </TouchableOpacity>
+            
         </View>
         <Text>School Name: {item.schoolName}</Text>
         <Text>Location: {item.location} </Text>

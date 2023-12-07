@@ -152,29 +152,48 @@ function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the
 
 function PersonalInfo({navigation}) //Personal Info Screen
 {
-  const [personalInfo, setPersonalInfo] = useState([
-    {firstName: '', lastName: '', address: '', phoneNum: '', email: '' }
-  ])
+  const [personalInfo, setPersonalInfo] = useState([]);
+  const [modalOpen, setModalOpen] = useState(true);
+  useEffect(() => {
+    loadPersonalInfo(); 
+  }, []); 
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [address, setAddress] = useState('');
-  const [phoneNum, setPhoneNum] = useState('');
-  const [email, setEmail] = useState('');
+  const loadPersonalInfo = async () => {
+    console.log("load personalInfo called");
+    try {
+      const storedPersonalInfo = await AsyncStorage.getItem("storedPersonalInfo");
+      if (storedPersonalInfo !== null) {
+        setPersonalInfo(JSON.parse(storedPersonalInfo));
+       
+      }
+      
+    } catch (e) {
+      alert('Failed to fetch the input from storage: ' + e);
+    }
+  };
+  const addPersonalInfo = async (personal) => {
+    personal.key = Math.random().toString();
+    const newPersonalInfo = [...personalInfo, personal];
 
-  // const saveData = async() => {
-  //   const url = "http://localhost:3000/users\heman\FBLA_app\personalInfo.json";
-  //   let result = await fetch(url,{
-  //     method:"POST",
-  //     headers: {"Content-Type":"application/json"},
-  //     body:JSON.stringify({firstName, lastName, address, phoneNum, email})
-  //   });
-  //   result = await result.json();
-  //   if(result){
-  //     console.warn("Data is added");
-  //    }
-  
-  // }
+    try {
+      await AsyncStorage.setItem("storedPersonalInfo", JSON.stringify(newPersonalInfo));
+      setPersonalInfo(newPersonalInfo);
+      setModalOpen(false);
+      console.log({ personalInfo: newPersonalInfo });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const removePersonalInfo = async (personal) => {
+    try {
+      const newPersonalInfo = personalInfo.filter(item => item !== personal);
+
+      await AsyncStorage.setItem("storedPersonalInfo", JSON.stringify(newPersonalInfo));
+      setPersonalInfo(newPersonalInfo);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return(
   //  <Sandbox />
@@ -183,8 +202,69 @@ function PersonalInfo({navigation}) //Personal Info Screen
       console.log('keyboard dismissed');
     }}>
     <View>
-      <ScrollView>
-        <View style = {styles.personalInfoText}>
+      
+        <FlatList data = {personalInfo} renderItem = {({item}) => (
+          <Card>
+            <TouchableOpacity onPress={()=>Alert.alert(
+              'Are you sure you want to delete this?',
+              'You cannot undo this action.',
+              [
+                {
+                  text: 'No',
+                  onPress: () => console.log('Cancelled'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => removeSport(item),
+                }
+              ], 
+              { cancelable: 'false'}
+            )}>
+                <MaterialIcons name = 'delete' size={30} color = "red"  />
+                <Text style={styles.sectionInfoCard}>{item.firstName} {item.lastName}</Text>
+                <Text style={styles.infoSubtitle}>Address: {item.address}</Text>
+                <Text style={styles.infoSubtitle}>Phone Number: {item.phoneNum}</Text>
+                <Text style={styles.infoSubtitle}>Email: {item.email}</Text>
+            </TouchableOpacity>
+          </Card>
+        )}/>
+        <Modal visible={modalOpen} animationType="slide">
+          <ScrollView>
+            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+              <View style={styles.modalContent}>
+                <MaterialIcons
+                  name="close"
+                  size={50}
+                  color="black"
+                  style={{ ...styles.modalToggle, ...styles.modalClose }}
+                  onPress={() => setModalOpen(false)}
+                />
+                <PersonalInfoForm addPersonalInfo={addPersonalInfo}/>
+               </View>
+            </TouchableWithoutFeedback>
+          </ScrollView>
+        </Modal>
+        <ScrollView>
+          <Text>
+            
+            <View style={{ paddingLeft: 170, paddingTop: 20 }}>
+              <TouchableOpacity>
+                {/* <Ionicons
+                  name="md-add-circle-outline"
+                  size={50}
+                  color="black"
+                  style={styles.modalToggle}
+                  onPress={() => setModalOpen(true)}
+                /> */}
+              </TouchableOpacity>
+            </View>
+          </Text>
+        </ScrollView>
+         
+          
+        
+        {/* <View style = {styles.personalInfoText}>
         <Text >What is your name?</Text>
         <TextInput 
         style = {styles.input}
@@ -218,14 +298,91 @@ function PersonalInfo({navigation}) //Personal Info Screen
           />
 
 
-        <Button title ="Submit" onPress={saveData} />
-        </View>
-      </ScrollView>
+        <Button title ="Submit" />
+        </View> */}
+      
     </View>
   </TouchableWithoutFeedback>
   )
 }
 
+function PersonalInfoForm({addPersonalInfo}, {personalInfo})
+{
+  const personalSchema = yup.object({
+    firstName: yup.string().required('This field is required.').min(2, 'Must be at least 2 characters'),
+    lastName: yup.string().required('This field is required.').min(2, 'Must be at least 2 characters'),
+    address: yup.string().required('This field is required.').min(2, 'Must be at least 2 characters'),
+    phoneNum: yup.number().required('This field is required.').positive(),
+    email: yup.string().required('This field is required.').email("Invalid email address"),
+
+  })
+
+  return (
+    <View>
+      <Formik
+        initialValues={{ firstName: '', lastName: '', address: '', phoneNum: '', email: ''}}
+        validationSchema={personalSchema}
+        onSubmit={(values) => {
+          console.log(values);
+          addPersonalInfo(values);
+          
+        }}
+      >
+      {(props) => (
+          <KeyboardAwareScrollView>
+            <Text style = {{marginTop: 5}}>First Name: </Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='First Name: '
+              onChangeText={props.handleChange('firstName')}
+              value={props.values.firstName}
+              onBlur={props.handleBlur('firstName')}
+            />
+            <Text style = {styles.errorText}>{props.touched.firstName && props.errors.firstName}</Text>
+
+            <Text style = {{marginTop: 5}}>Last Name: </Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Last Name: '
+              onChangeText={props.handleChange('lastName')}
+              value={props.values.lastName}
+              onBlur={props.handleBlur('lastName')}
+            />
+            <Text style = {styles.errorText}>{props.touched.lastName && props.errors.lastName}</Text>
+            <Text style = {{marginTop: 5}}>Address: </Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Address: '
+              onChangeText={props.handleChange('address')}
+              value={props.values.address}
+              onBlur={props.handleBlur('address')}
+            />
+            <Text style = {styles.errorText}>{props.touched.address && props.errors.address}</Text>
+            <Text style = {{marginTop: 5}}>Phone Number: </Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Phone Number: '
+              onChangeText={props.handleChange('phoneNum')}
+              value={props.values.phoneNum}
+              onBlur={props.handleBlur('phoneNum')}
+            />
+            <Text style = {styles.errorText}>{props.touched.phoneNum && props.errors.phoneNum}</Text>
+            <Text style = {{marginTop: 5}}>Email: </Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Email: '
+              onChangeText={props.handleChange('email')}
+              value={props.values.email}
+              onBlur={props.handleBlur('email')}
+            />
+            <Text style = {styles.errorText}>{props.touched.email && props.errors.email}</Text>
+            <Button title='Submit' onPress={props.handleSubmit} />
+            </KeyboardAwareScrollView>
+        )}
+      </Formik>
+    </View> 
+  )
+}
  
 
 
@@ -311,7 +468,7 @@ function AthleticAchievements({ navigation }) {
               { cancelable: 'false'}
             )}>
                 <MaterialIcons name = 'delete' size={30} color = "red"  /> 
-                {/* onPress={() => removeSport(item)} */}
+               
               </TouchableOpacity>
                 <View style={styles.rightIcon}>
                   <AntDesign name="right" size={30} />
@@ -415,7 +572,7 @@ function SportsForm({addSport}, {sports})
             <Text style = {{marginTop: 5}}>Sport Name: </Text>
             <TextInput 
               style={styles.formikInput}
-              placeholder='Sport Name '
+              placeholder='Sport Name: '
               onChangeText={props.handleChange('sportName')}
               value={props.values.sportName}
               onBlur={props.handleBlur('sportName')}
@@ -1036,18 +1193,58 @@ function VolunteerServicesInfo({route, navigation})
 
 function EC({navigation})
 {
-  const [ecs, setECS] = useState([
-    {activity: 'Taekwondo', startDate: '2021/3/12', endDate: '2022/5/12', avgHrsPerWeek: '4', totalHrs: '234', gradesParticipated: '9, 10, 11', comments: "i'm bruce lee", key: '1'},
+  // const [ecs, setECS] = useState([
+  //   {activity: 'Taekwondo', startDate: '2021/3/12', endDate: '2022/5/12', avgHrsPerWeek: '4', totalHrs: '234', gradesParticipated: '9, 10, 11', comments: "i'm bruce lee", key: '1'},
 
-  ])
-  const addEC = (ec) => {
-    ec.key = Math.random().toString();
-    setECS((currentEC) => {
-      return [ec, ...currentEC]
-    });
-    setModalOpen(false);
-  }
+  // ])
+  // const addEC = (ec) => {
+  //   ec.key = Math.random().toString();
+  //   setECS((currentEC) => {
+  //     return [ec, ...currentEC]
+  //   });
+  //   setModalOpen(false);
+  // }
+
+  const [ecs, setECS] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  useEffect(() => {
+    loadECS(); 
+  }, []);
+  const loadECS = async () => {
+    console.log("load ECS called");
+    try {
+      const storedECS = await AsyncStorage.getItem("storedECS");
+      if (storedECS !== null) {
+        setECS(JSON.parse(storedECS));
+      }
+    } catch (e) {
+      alert('Failed to fetch the input from storage: ' + e);
+    }
+  };
+
+  const addEC = async (ec) => {
+    ec.key = Math.random().toString();
+    const newECS = [...ecs, ec];
+
+    try {
+      await AsyncStorage.setItem("storedECS", JSON.stringify(newECS));
+      setECS(newECS);
+      setModalOpen(false);
+      console.log({ ecs: newECS });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const removeEC = async (ec) => {
+    try {
+      const newECS = ecs.filter(item => item !== ec);
+
+      await AsyncStorage.setItem("storedECS", JSON.stringify(newECS));
+      setECS(newECS);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return(
     <TouchableWithoutFeedback onPress={() => {
@@ -1060,6 +1257,24 @@ function EC({navigation})
       renderItem={({item}) =>(
         <Card>
         <TouchableOpacity onPress={() => navigation.navigate('Extracurricular Activities Info', {item})}>
+        <TouchableOpacity onPress={()=>Alert.alert(
+              'Are you sure you want to delete this?',
+              'You cannot undo this action.',
+              [
+                {
+                  text: 'No',
+                  onPress: () => console.log('Cancelled'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => removeEC(item),
+                }
+              ], 
+              { cancelable: 'false'}
+            )}>
+                <MaterialIcons name = 'delete' size={30} color = "red"  /> 
+                </TouchableOpacity>
         <View style = {styles.rightIcon}>
         <AntDesign name = 'right' size={30} />
           <Text style={styles.sectionInfoCard}>
@@ -1128,7 +1343,7 @@ function ECSForm({addEC})
     <View>
       <Formik
         initialValues={{ activity: '', startDate: '', endDate: '', avgHrsPerWeek: '', totalHrs: '', gradesParticipated: '', comments: ''}}
-        validationSchema={sportsSchema}
+        validationSchema={ECSchema}
         onSubmit={(values) => {
           console.log(values);
           addEC(values);
@@ -1221,11 +1436,7 @@ function ECInfo({route, navigation})
     <View>
     <Card>
       <View>
-      <View style = {styles.rightIcon}>
-            <TouchableOpacity>
-          <MaterialIcons name = 'delete' size={30} color = "red" />
-          </TouchableOpacity>
-        </View>
+      
         <Text>Activity Name: {item.activity}</Text>
         <Text>Start Date: {item.startDate}</Text>
         <Text>End Date: {item.endDate} </Text>
@@ -1244,18 +1455,48 @@ function ECInfo({route, navigation})
 
 function AwardsCertificates({navigation})
 {
-  const[acs, setACS] = useState([
-    {awardName: '', dateReceived: '', gradesReceived: '', comments: '', key: '1' }
-
-  ])
-  const addAC = (ac) => {
-    ac.key = Math.random().toString();
-    setACS((currACS) => {
-      return [acs, ...currACS]
-    });
-    setModalOpen(false);
-  }
+  const[acs, setACS] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    loadACS(); 
+  }, []); 
+
+  const loadACS = async () => {
+    console.log("load acs called");
+    try {
+      const storedACS = await AsyncStorage.getItem("storedACS");
+      if (storedACS !== null) {
+        setACS(JSON.parse(storedACS));
+      }
+    } catch (e) {
+      alert('Failed to fetch the input from storage: ' + e);
+    }
+  };
+  const addAC = async (ac) => {
+    ac.key = Math.random().toString();
+    const newACS = [...acs, ac];
+
+    try {
+      await AsyncStorage.setItem("storedACS", JSON.stringify(newACS));
+      setACS(newACS);
+      setModalOpen(false);
+      console.log({ acs: newACS });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const removeAC = async (ac) => {
+    try {
+      const newACS = acs.filter(item => item !== ac);
+
+      await AsyncStorage.setItem("storedACS", JSON.stringify(newACS));
+      setACS(newACS);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
 
   return(
     <TouchableWithoutFeedback onPress={() => {
@@ -1268,6 +1509,25 @@ function AwardsCertificates({navigation})
       renderItem={({item}) =>(
         <Card>
         <TouchableOpacity onPress={() => navigation.navigate('Awards/Certificates Info', {item})}>
+        <TouchableOpacity onPress={()=>Alert.alert(
+              'Are you sure you want to delete this?',
+              'You cannot undo this action.',
+              [
+                {
+                  text: 'No',
+                  onPress: () => console.log('Cancelled'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => removeAC(item),
+                }
+              ], 
+              { cancelable: 'false'}
+            )}>
+                <MaterialIcons name = 'delete' size={30} color = "red"  /> 
+               
+              </TouchableOpacity>
         <View style = {styles.rightIcon}>
         <AntDesign name = 'right' size={30} />
           <Text style={styles.sectionInfoCard}>
@@ -1315,7 +1575,7 @@ function AwardsCertificates({navigation})
     </ScrollView>
   </View>
   </TouchableWithoutFeedback>
-  )
+  );
 
 }
 
@@ -1394,27 +1654,10 @@ function AwardsCertificatesInfo({route, navigation})
   return(
     <View>
     <Card>
-      <View>
+      
       <View style = {styles.rightIcon}>
-            <TouchableOpacity onPress={()=>Alert.alert(
-              'Are you sure you want to delete this?',
-              'You cannot undo this action.',
-              [
-                {
-                  text: 'No',
-                  onPress: () => console.log('Cancelled'),
-                  style: 'cancel',
-                },
-                {
-                  text: 'Yes',
-                  onPress: () => console.log('Deleted'),
-                }
-              ], 
-              { cancelable: 'false'}
-            )}>
-          <MaterialIcons name = 'delete' size={30} color = "red" />
-          </TouchableOpacity>
-        </View>
+
+
         <Text>Award Name: {item.awardName}</Text>
         <Text>Date Received: {item.dateReceived}</Text>
         <Text>Grades Received: {item.gradesReceived}</Text>
@@ -1426,31 +1669,206 @@ function AwardsCertificatesInfo({route, navigation})
   );
 }
 
+function SA({navigation})
+{
+  const [sas, setSAS] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
 
-/*function HeaderBar({navigation}) {
-  return (
-      <View style = {styles.header}>
-      {<Feather name="check" size ={20} onPress={navigation.navigate('Portfolio 1 Builder')} style = {styles.icon} />}
-          <View>
-              <Text style = {styles.headerText}>
-                  Gazomezone
-              </Text>
-          </View>
+  useEffect(() => {
+    loadSAS(); 
+  }, []); 
+
+  const loadSAS = async () => {
+    console.log("load sas called");
+    try {
+      const storedSAS = await AsyncStorage.getItem("storedSAS");
+      if (storedSAS !== null) {
+        setSAS(JSON.parse(storedSAS));
+      }
+    } catch (e) {
+      alert('Failed to fetch the input from storage: ' + e);
+    }
+  };
+
+  const addSA = async (sa) => {
+    sa.key = Math.random().toString();
+    const newSAS = [...sas, sa];
+
+    try {
+      await AsyncStorage.setItem("storedSAS", JSON.stringify(newSAS));
+      setSAS(newSAS);
+      setModalOpen(false);
+      console.log({ sas: newSAS });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const removeSA = async (sa) => {
+    try {
+      const newSAS = sas.filter(item => item !== sa);
+
+      await AsyncStorage.setItem("storedSAS", JSON.stringify(newSAS));
+      setSAS(newSAS);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return(
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View>
+        <FlatList
+          data={sas}
+          renderItem={({ item }) => (
+            <Card>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Skill/Academic Achievements Info', { item })}
+              >
+              <TouchableOpacity onPress={()=>Alert.alert(
+              'Are you sure you want to delete this?',
+              'You cannot undo this action.',
+              [
+                {
+                  text: 'No',
+                  onPress: () => console.log('Cancelled'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => removeSA(item),
+                }
+              ], 
+              { cancelable: 'false'}
+            )}>
+                <MaterialIcons name = 'delete' size={30} color = "red"  /> 
+               
+              </TouchableOpacity>
+                <View style={styles.rightIcon}>
+                  <AntDesign name="right" size={30} />
+                  <Text style={styles.sectionInfoCard}>{item.SAName}</Text>
+                </View>
+              </TouchableOpacity>
+            </Card>
+          )}
+        />
+        <Modal visible={modalOpen} animationType="slide">
+          <ScrollView>
+            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+              <View style={styles.modalContent}>
+                <MaterialIcons
+                  name="close"
+                  size={50}
+                  color="black"
+                  style={{ ...styles.modalToggle, ...styles.modalClose }}
+                  onPress={() => setModalOpen(false)}
+                />
+                <SASForm addSA={addSA} />
+              </View>
+            </TouchableWithoutFeedback>
+          </ScrollView>
+        </Modal>
+        <ScrollView>
+          <Text>
+            
+            <View style={{ paddingLeft: 170, paddingTop: 20 }}>
+              <TouchableOpacity>
+                <Ionicons
+                  name="md-add-circle-outline"
+                  size={50}
+                  color="black"
+                  style={styles.modalToggle}
+                  onPress={() => setModalOpen(true)}
+                />
+              </TouchableOpacity>
+            </View>
+          </Text>
+        </ScrollView>
       </View>
+    </TouchableWithoutFeedback>
   );
-} */
+}
+
+function SASForm({addSA}, {sas})
+{
+  const sasSchema = yup.object({
+    SAName: yup.string().required('This field is required.').min(3, 'Must be at least 3 characters'),
+    dateAwarded: yup.date().required('This field is required.').max(new Date()),
+    comments: yup.string()
+  })
+
+  return(
+    <View>
+      <Formik
+        initialValues={{ SAName: '', dateAwarded: '', comments: ''}}
+        validationSchema={sasSchema}
+        onSubmit={(values) => {
+          console.log(values);
+          addSA(values);
+          
+        }}
+      >
+      {(props) => (
+          <KeyboardAwareScrollView>
+            <Text style = {{marginTop: 5}}>Skill/Achievement: </Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Skill/Achievement: '
+              onChangeText={props.handleChange('SAName')}
+              value={props.values.SAName}
+              onBlur={props.handleBlur('SAName')}
+            />
+            <Text style = {styles.errorText}>{props.touched.SAName && props.errors.SAName}</Text>
+
+            <Text style = {{marginTop: 5}}>Date Awarded: (YYYY-MM-DD)</Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Date Awarded: (YYYY-MM-DD) '
+              onChangeText={props.handleChange('dateAwarded')}
+              value={props.values.dateAwarded}
+              onBlur={props.handleBlur('dateAwarded')}
+            />
+            <Text style = {styles.errorText}>{props.touched.dateAwarded && props.errors.dateAwarded}</Text>
+            <TextInput 
+              style={styles.formikInput}
+              multiline
+              placeholder='Comments: '
+              onChangeText={props.handleChange('comments')}
+              value={props.values.comments}
+              onBlur={props.handleBlur('comments')}
+            />
+            <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
+
+            
+            <Button title='Submit' onPress={props.handleSubmit} />
+          </KeyboardAwareScrollView>
+        )}
+      </Formik>
+    </View>
+  )
+}
+
+function SAInfo({route})
+{
+  const {item} = route.params;
+  return (
+    <View>
+    <Card>
+      <View>
+      <View style = {styles.rightIcon}>
+        </View>
+        <Text>Skill/Achievement: {item.SAName}</Text>
+        <Text>Date Awarded: {item.dateAwarded}</Text>
+        <Text>Comments: {item.comments} </Text>
+
+      </View>
+    </Card>
+    </View>
+  );
+}
 
 const Stack = createNativeStackNavigator();
 
- /* const [name, setName] = useState('Harry');
-  const [userInfo, setUserInfo] = useState({firstName: 'First Name', lastName: 'Last Name', email: 'user@example.com', phoneNum: 1234567890, address: '123 Sleepy Lane'});
-  const [age, setAge] = useState(30); 
 
-  const pressHandler = () => {
-    setName('Harold');
-    setAge('50');
-    setUserInfo({firstName: 'Jeff', lastName: 'Doe', email: 'johndoe@hotmail.com', phoneNum: 2224568765, address: '9110 Trenton Way' });
-  } */
 export default function App() {
 
 
@@ -1481,7 +1899,8 @@ export default function App() {
         <Stack.Screen name = "Extracurricular Activities Info" component={ECInfo}/>
         <Stack.Screen name = "Awards/Certificates" component ={AwardsCertificates}/>
         <Stack.Screen name = "Awards/Certificates Info" component = {AwardsCertificatesInfo}/>
-        
+        <Stack.Screen name = "Skills/Academic Achievements" component ={SA}/>
+        <Stack.Screen name = "Skill/Academic Achievements Info" component = {SAInfo}/>
       </Stack.Navigator>
     </NavigationContainer>
    
@@ -1681,6 +2100,13 @@ sectionInfoCard: {
   fontSize: 30,
   padding: 6,
   
+},
+infoSubtitle: {
+  flex: 1,
+  textAlign: 'left',
+  //flexDirection: 'row',
+  fontSize: 18,
+  padding: 6,
 },
 
 modalToggle: {

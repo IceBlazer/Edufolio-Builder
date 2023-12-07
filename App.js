@@ -2232,6 +2232,218 @@ function LeadershipInfo({route})
   );
 }
 
+function HC({navigation})
+{
+  const[hcs, setHCS] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  useEffect(() => {
+    loadHCS(); 
+  }, []);
+  const loadHCS = async () => {
+    console.log("load hcs called");
+    try {
+      const storedHCS = await AsyncStorage.getItem("storedHCS");
+      if (storedHCS !== null) {
+        setHCS(JSON.parse(storedHCS));
+      }
+    } catch (e) {
+      alert('Failed to fetch the input from storage: ' + e);
+    }
+  };
+
+  const addHC = async (hc) => {
+    hc.key = Math.random().toString();
+    const newHCS = [...hcs, hc];
+
+    try {
+      await AsyncStorage.setItem("storedHCS", JSON.stringify(newHCS));
+      setHCS(newHCS);
+      setModalOpen(false);
+      console.log({ hcs: newHCS });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const removeHC = async (hc) => {
+    try {
+      const newHCS = hcs.filter(item => item !== hc);
+
+      await AsyncStorage.setItem("storedHCS", JSON.stringify(newHCS));
+      setHCS(newHCS);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  return(
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss();
+      console.log('keyboard dismissed');
+    }}>
+  <View>
+    <FlatList
+      data={hcs}
+      renderItem={({item}) =>(
+        <Card>
+        <TouchableOpacity onPress={() => navigation.navigate('Extracurricular Activities Info', {item})}>
+        <TouchableOpacity onPress={()=>Alert.alert(
+              'Are you sure you want to delete this?',
+              'You cannot undo this action.',
+              [
+                {
+                  text: 'No',
+                  onPress: () => console.log('Cancelled'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => removeHC(item),
+                }
+              ], 
+              { cancelable: 'false'}
+            )}>
+                <MaterialIcons name = 'delete' size={30} color = "red"  /> 
+                </TouchableOpacity>
+        <View style = {styles.rightIcon}>
+        <AntDesign name = 'right' size={30} />
+          <Text style={styles.sectionInfoCard}>
+            {item.className}
+          </Text>
+        </View>
+        </TouchableOpacity>
+        </Card>
+      )}
+     />
+     <Modal visible={modalOpen} animationType='slide'>
+    <ScrollView>
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss();
+      console.log('keyboard dismissed');
+    }}>
+      <View style={styles.modalContent}>
+        <MaterialIcons 
+              name="close" 
+              size={50} 
+              color="black"
+              style={{...styles.modalToggle, ...styles.modalClose}}
+              onPress={() => setModalOpen(false)} 
+          />
+        <HCSForm addHC={addHC} />
+      </View>
+      </TouchableWithoutFeedback>
+      </ScrollView>
+    </Modal>
+    <ScrollView>
+      <Text>
+        <View style = {{paddingLeft: 170, paddingTop: 20}}>
+        <TouchableOpacity>
+          <Ionicons 
+            name="md-add-circle-outline" 
+            size={50} 
+            color="black"
+            style={styles.modalToggle}
+            onPress={() => setModalOpen(true)}
+             />
+          </TouchableOpacity>
+        
+        </View>
+      </Text>
+    </ScrollView>
+  </View>
+  </TouchableWithoutFeedback>
+  )
+}
+
+function HCSForm({addHC})
+{
+  const HCSchema = yup.object({
+    className: yup.string().required('This field is required.').min(3, 'Must be at least 3 characters'),
+    startDate: yup.date().required('This field is required.').max(new Date()),
+    endDate: yup.date().max(new Date()),
+    comments: yup.string()
+  })
+  return(
+    <View>
+      <Formik
+        initialValues={{ className: '', startDate: '', endDate: '', comments: ''}}
+        validationSchema={HCSchema}
+        onSubmit={(values) => {
+          console.log(values);
+          addHC(values);
+        }}
+      >
+      {(props) => (
+          <KeyboardAwareScrollView>
+            <Text style = {{marginTop: 5}}>Class Name: </Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Class Name: '
+              onChangeText={props.handleChange('className')}
+              value={props.values.className}
+              onBlur={props.handleBlur('className')}
+            />
+            <Text style = {styles.errorText}>{props.touched.className && props.errors.className}</Text>
+            <Text style = {{marginTop: 5}}>Start Date: (YYYY-MM-DD)</Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Start Date: (YYYY-MM-DD) '
+              onChangeText={props.handleChange('startDate')}
+              value={props.values.startDate}
+              onBlur={props.handleBlur('startDate')}
+            />
+            <Text style = {styles.errorText}>{props.touched.startDate && props.errors.startDate}</Text>
+            <Text style = {{marginTop: 5}}>End Date: (YYYY-MM-DD)</Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='End Date: (YYYY-MM-DD) '
+              onChangeText={props.handleChange('endDate')}
+              value={props.values.endDate}
+              onBlur={props.handleBlur('endDate')} 
+            />
+            <Text style = {styles.errorText}>{props.touched.endDate && props.errors.endDate}</Text>
+
+            <TextInput 
+              style={styles.formikInput}
+              multiline
+              placeholder='Comments: '
+              onChangeText={props.handleChange('comments')}
+              value={props.values.comments}
+              onBlur={props.handleBlur('comments')}
+            />
+            <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
+
+            
+            <Button title='Submit' onPress={props.handleSubmit} />
+          </KeyboardAwareScrollView>
+        )}
+      </Formik>
+    </View>
+  )
+} 
+
+function HCInfo({route})
+{
+  const {item} = route.params;
+
+  
+
+  return(
+    <View>
+    <Card>
+      <View>
+      
+        <Text>Class Name: {item.className}</Text>
+        <Text>Start Date: {item.startDate}</Text>
+        <Text>End Date: {item.endDate} </Text>
+        <Text>Comments: {item.comments} </Text>
+
+      </View>
+    </Card>
+    </View>
+    
+  );
+}
+
 function AdditionalInfo({navigation})
 {
   const [aI, setAI] = useState([]);
@@ -2415,6 +2627,8 @@ export default function App() {
         <Stack.Screen name = "Leadership" component={Leadership}/>
         <Stack.Screen name = "Leadership Info" component={LeadershipInfo}/>
         <Stack.Screen name = "Additional Information" component={AdditionalInfo}/>
+        <Stack.Screen name = "Honors Classes" component={HC}/>
+        <Stack.Screen name = "Honors Classes Info" component={HCInfo}/>
 
       </Stack.Navigator>
     </NavigationContainer>

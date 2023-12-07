@@ -46,13 +46,13 @@ function HomeScreen({navigation}) { //homeScreen
         onPress={() => navigation.navigate('Portfolio List')}
       />
       <Text style = {{fontWeight: 'bold'}}>Todo List: </Text>
-      <Text style = {{fontWeight: 'bold'}}>- Implement add sections and make sections hide unless selected by the user to include in the portfolio</Text>
       <Text style = {{fontWeight: 'bold'}}>- Add function to generate portfolio somehow</Text>
-      <Text style = {{fontWeight: 'bold'}}>- Add delete function for the cards in the sections</Text>
       <Text style = {{fontWeight: 'bold'}}>- Make app look good</Text>
       <Text style = {{fontWeight: 'bold'}}>- Create App Icon and Include Images</Text>
       <Text style = {{fontWeight: 'bold'}}>- Add at least 2 social media app connections in the about me section</Text>
-      <Text style = {{fontWeight: 'bold'}}>- Add delete function for the cards in the sections</Text>
+      <Text style = {{fontWeight: 'bold'}}>- Implement add sections and make sections hide unless selected by the user to include in the portfolio</Text>
+
+
 
       </ScrollView>
     </View>
@@ -63,7 +63,6 @@ function PortfolioList({navigation}) //Portfolio List Screen
 {
   const [portfolios, setPortfolio] = useState([
     { name: 'Portfolio 1', key: '1'},
-    { name: 'Portfolio 2', key: '2'},
   ]);
 
 
@@ -89,8 +88,7 @@ function PortfolioList({navigation}) //Portfolio List Screen
     
       <Text>This will be the list of all the user's portfolios.</Text>
       <Text>User can click on one portfolio and start adding/removing sections and editing.</Text>
-      <Text>Most likely will add a custom button component to display a portfolio.</Text>
-      <Text>Add ScrollView as well and list component.</Text>
+      
       </ScrollView>
     </View>
     
@@ -130,7 +128,12 @@ function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the
             renderItem={({item}) => (
               <TouchableOpacity onPress={() => navigation.navigate(item.name)}>
                 <Card>
-                <Text>{item.name}</Text>
+                <TouchableOpacity>
+                  <View style = {styles.rightIcon}>
+                  <AntDesign name = 'right' size={30} />
+                  </View>
+                </TouchableOpacity>
+                <Text style={styles.portfolioBuilderCard}>{item.name}</Text>
                 </Card>
                   
                 
@@ -2820,6 +2823,7 @@ rightIcon: {
   flexDirection: 'row-reverse',
   justifyContent: 'space-between',
   alignItems: 'center',
+  //padding: 3,
 },
 
 sectionInfoCard: {
@@ -2829,6 +2833,12 @@ sectionInfoCard: {
   fontSize: 30,
   padding: 6,
   
+},
+portfolioBuilderCard: {
+  flex: 1,
+  textAlign: 'left',
+  fontSize: 26,
+  padding:5 ,
 },
 infoSubtitle: {
   flex: 1,

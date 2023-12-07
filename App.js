@@ -1538,7 +1538,7 @@ function ACSForm({addAC})
   const acsSchema = yup.object({
     awardName: yup.string().required('This field is required.').min(3, 'Must be at least 3 characters'),
     dateReceived: yup.date().required('This field is required.').max(new Date()),
-    gradesParticipated: yup.string().required('This field is required.'),
+    gradesReceived: yup.string().required('This field is required.'),
     comments: yup.string()
   })
   return(
@@ -1608,15 +1608,17 @@ function AwardsCertificatesInfo({route, navigation})
   return(
     <View>
     <Card>
-      
+      <View>
       <View style = {styles.rightIcon}>
-
-
+            
+        </View>
         <Text>Award Name: {item.awardName}</Text>
-        <Text>Date Received: {item.dateReceived}</Text>
+        <Text>Date Received: {item.dateReceived} </Text>
+        
         <Text>Grades Received: {item.gradesReceived}</Text>
         <Text>Comments: {item.comments} </Text>
-        </View>
+
+      </View>
     </Card>
     </View>
     

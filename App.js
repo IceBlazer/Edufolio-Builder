@@ -110,7 +110,8 @@ function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the
     { name: 'Music/Artistic Achievements', key: '7'},
     { name: 'Athletic Achievements', key: '8'},
     { name: 'Leadership', key: '9'},
-    {name: 'Additional Information', key: '10'}
+    { name: 'Honors Classes', key: '10'},
+    { name: 'Additional Information', key: '11'},
 
   ])
 
@@ -216,7 +217,7 @@ function PersonalInfo({navigation}) //Personal Info Screen
                 },
                 {
                   text: 'Yes',
-                  onPress: () => removeSport(item),
+                  onPress: () => removePersonalInfo(item),
                 }
               ], 
               { cancelable: 'false'}
@@ -250,57 +251,10 @@ function PersonalInfo({navigation}) //Personal Info Screen
             
             <View style={{ paddingLeft: 170, paddingTop: 20 }}>
               <TouchableOpacity>
-                {/* <Ionicons
-                  name="md-add-circle-outline"
-                  size={50}
-                  color="black"
-                  style={styles.modalToggle}
-                  onPress={() => setModalOpen(true)}
-                /> */}
               </TouchableOpacity>
             </View>
           </Text>
         </ScrollView>
-         
-          
-        
-        {/* <View style = {styles.personalInfoText}>
-        <Text >What is your name?</Text>
-        <TextInput 
-        style = {styles.input}
-        placeholder = 'First Name' 
-        onChangeText={(val) => setFirstName(val)}
-        />
-        <TextInput 
-        style = {styles.input}
-        placeholder = 'Last Name'
-        onChangeText={(val) => setLastName(val)}
-        />
-        <Text >Address: </Text>
-        <TextInput 
-        style = {styles.input}
-        placeholder = '123 Example Way, Example City, FL, 12345'
-        onChangeText={(val) => setAddress(val)}
-        />
-        <Text >Phone Number: </Text>
-        <TextInput 
-        style = {styles.input}
-        placeholder='1234567890'
-        maxLength={10}
-        multiline={false}
-        onChangeText={(val) => setPhoneNum(val)}
-        />
-        <Text>Email: </Text>
-        <TextInput
-          style = {styles.input}
-          placeholder =  'johndoe@example.com'
-          onChangeText={(val) => setEmail(val)}
-          />
-
-
-        <Button title ="Submit" />
-        </View> */}
-      
     </View>
   </TouchableWithoutFeedback>
   )
@@ -1866,6 +1820,559 @@ function SAInfo({route})
   );
 }
 
+function MA({navigation})
+{
+  const [mas, setMAS] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    loadMAS(); 
+  }, []); 
+
+  const loadMAS = async () => {
+    console.log("load mas called");
+    try {
+      const storedMAS = await AsyncStorage.getItem("storedMAS");
+      if (storedMAS !== null) {
+        setMAS(JSON.parse(storedMAS));
+      }
+    } catch (e) {
+      alert('Failed to fetch the input from storage: ' + e);
+    }
+  };
+
+  const addMA = async (ma) => {
+    ma.key = Math.random().toString();
+    const newMAS = [...mas, ma];
+
+    try {
+      await AsyncStorage.setItem("storedMAS", JSON.stringify(newMAS));
+      setMAS(newMAS);
+      setModalOpen(false);
+      console.log({ mas: newMAS });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const removeMA = async (ma) => {
+    try {
+      const newMAS = mas.filter(item => item !== ma);
+
+      await AsyncStorage.setItem("storedMAS", JSON.stringify(newMAS));
+      setMAS(newMAS);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return(
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View>
+        <FlatList
+          data={mas}
+          renderItem={({ item }) => (
+            <Card>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Music/Artistic Achievements Info', { item })}
+              >
+              <TouchableOpacity onPress={()=>Alert.alert(
+              'Are you sure you want to delete this?',
+              'You cannot undo this action.',
+              [
+                {
+                  text: 'No',
+                  onPress: () => console.log('Cancelled'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => removeMA(item),
+                }
+              ], 
+              { cancelable: 'false'}
+            )}>
+                <MaterialIcons name = 'delete' size={30} color = "red"  /> 
+               
+              </TouchableOpacity>
+                <View style={styles.rightIcon}>
+                  <AntDesign name="right" size={30} />
+                  <Text style={styles.sectionInfoCard}>{item.MAName}</Text>
+                </View>
+              </TouchableOpacity>
+            </Card>
+          )}
+        />
+        <Modal visible={modalOpen} animationType="slide">
+          <ScrollView>
+            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+              <View style={styles.modalContent}>
+                <MaterialIcons
+                  name="close"
+                  size={50}
+                  color="black"
+                  style={{ ...styles.modalToggle, ...styles.modalClose }}
+                  onPress={() => setModalOpen(false)}
+                />
+                <MASForm addMA={addMA} />
+              </View>
+            </TouchableWithoutFeedback>
+          </ScrollView>
+        </Modal>
+        <ScrollView>
+          <Text>
+            
+            <View style={{ paddingLeft: 170, paddingTop: 20 }}>
+              <TouchableOpacity>
+                <Ionicons
+                  name="md-add-circle-outline"
+                  size={50}
+                  color="black"
+                  style={styles.modalToggle}
+                  onPress={() => setModalOpen(true)}
+                />
+              </TouchableOpacity>
+            </View>
+          </Text>
+        </ScrollView>
+      </View>
+    </TouchableWithoutFeedback>
+  );
+}
+
+function MASForm({addMA}, {mas})
+{
+  const masSchema = yup.object({
+    MAName: yup.string().required('This field is required.').min(3, 'Must be at least 3 characters'),
+    dateAwarded: yup.date().required('This field is required.').max(new Date()),
+    avgHrsPerWeek: yup.number().required('This field is required.').positive().max(168, 'Must be less than 168'),
+    totalHrs: yup.number().required('This field is required.').positive(),
+    comments: yup.string()
+  })
+  return(
+    <View>
+      <Formik
+        initialValues={{ MAName: '', dateAwarded: '', avgHrsPerWeek: '', totalHrs: '', comments: ''}}
+        validationSchema={masSchema}
+        onSubmit={(values) => {
+          console.log(values);
+          addMA(values);
+        }}
+      >
+      {(props) => (
+          <KeyboardAwareScrollView>
+            <Text style = {{marginTop: 5}}>Music/Artistic Achievement: </Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Music/Artistic Achievement:: '
+              onChangeText={props.handleChange('MAName')}
+              value={props.values.MAName}
+              onBlur={props.handleBlur('MAName')}
+            />
+            <Text style = {styles.errorText}>{props.touched.MAName && props.errors.MAName}</Text>
+            <Text style = {{marginTop: 5}}>Date Awarded: (YYYY-MM-DD)</Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Date Awarded: (YYYY-MM-DD) '
+              onChangeText={props.handleChange('dateAwarded')}
+              value={props.values.dateAwarded}
+              onBlur={props.handleBlur('dateAwarded')}
+            />
+            <Text style = {styles.errorText}>{props.touched.dateAwarded && props.errors.dateAwarded}</Text>
+            <Text style = {{marginTop: 5}}>Average Number of Hours Per Week:</Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Average Number of Hours Per Week: '
+              onChangeText={props.handleChange('avgHrsPerWeek')}
+              value={props.values.avgHrsPerWeek}
+              keyboardType='numeric'
+              onBlur={props.handleBlur('avgHrsPerWeek')}
+            />
+            <Text style = {styles.errorText}>{props.touched.avgHrsPerWeek && props.errors.avgHrsPerWeek}</Text>
+            <Text style = {{marginTop: 5}}>Total Hours: </Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Total Hours: '
+              onChangeText={props.handleChange('totalHrs')}
+              value={props.values.totalHrs}
+              onBlur={props.handleBlur('totalHrs')}
+              keyboardType='numeric'
+            />
+            <Text style = {styles.errorText}>{props.touched.totalHrs && props.errors.totalHrs}</Text>
+            <TextInput 
+              style={styles.formikInput}
+              multiline
+              placeholder='Comments: '
+              onChangeText={props.handleChange('comments')}
+              value={props.values.comments}
+              onBlur={props.handleBlur('comments')}
+            />
+            <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
+
+            
+            <Button title='Submit' onPress={props.handleSubmit} />
+          </KeyboardAwareScrollView>
+        )}
+      </Formik>
+    </View>
+  )
+}
+
+function MAInfo({route})
+{
+  const {item} = route.params;
+
+  
+
+  return(
+    <View>
+    <Card>
+      <View>
+      
+        <Text>Music/Artistic Achievement: {item.MAName}</Text>
+        <Text>Date Awarded: {item.dateAwarded}</Text>
+        <Text>Average Hours Per Week: {item.avgHrsPerWeek} </Text>
+        <Text>Total Hours: {item.totalHrs}</Text>
+        <Text>Comments: {item.comments} </Text>
+
+      </View>
+    </Card>
+    </View>
+    
+  );
+}
+
+function Leadership({navigation})
+{
+  const [leaderships, setLeaderships] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  useEffect(() => {
+    loadLeaderships(); 
+  }, []);
+  const loadLeaderships = async () => {
+    console.log("load leaderships called");
+    try {
+      const storedLeaderships = await AsyncStorage.getItem("storedLeaderships");
+      if (storedLeaderships !== null) {
+        setLeaderships(JSON.parse(storedLeaderships));
+      }
+    } catch (e) {
+      alert('Failed to fetch the input from storage: ' + e);
+    }
+  };
+
+  const addLeadership = async (l) => {
+    l.key = Math.random().toString();
+    const newLeaderships = [...leaderships, l];
+
+    try {
+      await AsyncStorage.setItem("storedLeaderships", JSON.stringify(newLeaderships));
+      setLeaderships(newLeaderships);
+      setModalOpen(false);
+      console.log({ leaderships: newLeaderships });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const removeLeadership = async (l) => {
+    try {
+      const newLeaderships = leaderships.filter(item => item !== l);
+
+      await AsyncStorage.setItem("storedLeaderships", JSON.stringify(newLeaderships));
+      setLeaderships(newLeaderships);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return(
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss();
+      console.log('keyboard dismissed');
+    }}>
+  <View>
+    <FlatList
+      data={leaderships}
+      renderItem={({item}) =>(
+        <Card>
+        <TouchableOpacity onPress={() => navigation.navigate('Leadership Info', {item})}>
+        <TouchableOpacity onPress={()=>Alert.alert(
+              'Are you sure you want to delete this?',
+              'You cannot undo this action.',
+              [
+                {
+                  text: 'No',
+                  onPress: () => console.log('Cancelled'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => removeLeadership(item),
+                }
+              ], 
+              { cancelable: 'false'}
+            )}>
+                <MaterialIcons name = 'delete' size={30} color = "red"  /> 
+                </TouchableOpacity>
+        <View style = {styles.rightIcon}>
+        <AntDesign name = 'right' size={30} />
+          <Text style={styles.sectionInfoCard}>
+            {item.position}
+          </Text>
+        </View>
+        </TouchableOpacity>
+        </Card>
+      )}
+     />
+     <Modal visible={modalOpen} animationType='slide'>
+    <ScrollView>
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss();
+      console.log('keyboard dismissed');
+    }}>
+      <View style={styles.modalContent}>
+        <MaterialIcons 
+              name="close" 
+              size={50} 
+              color="black"
+              style={{...styles.modalToggle, ...styles.modalClose}}
+              onPress={() => setModalOpen(false)} 
+          />
+        <LeadershipForm addLeadership={addLeadership} />
+      </View>
+      </TouchableWithoutFeedback>
+      </ScrollView>
+    </Modal>
+    <ScrollView>
+      <Text>
+        <View style = {{paddingLeft: 170, paddingTop: 20}}>
+        <TouchableOpacity>
+          <Ionicons 
+            name="md-add-circle-outline" 
+            size={50} 
+            color="black"
+            style={styles.modalToggle}
+            onPress={() => setModalOpen(true)}
+             />
+          </TouchableOpacity>
+        
+        </View>
+      </Text>
+    </ScrollView>
+  </View>
+  </TouchableWithoutFeedback>
+  )
+}
+
+function LeadershipForm({addLeadership})
+{
+  const leadershipSchema = yup.object({
+    position: yup.string().required('This field is required.').min(3, 'Must be at least 3 characters'),
+    comments: yup.string()
+  })
+  return(
+    <View>
+      <Formik
+        initialValues={{ position: '', comments: ''}}
+        validationSchema={leadershipSchema}
+        onSubmit={(values) => {
+          console.log(values);
+          addLeadership(values);
+        }}
+      >
+      {(props) => (
+          <KeyboardAwareScrollView>
+            <Text style = {{marginTop: 5}}>Position: </Text>
+            <TextInput 
+              style={styles.formikInput}
+              placeholder='Position: '
+              onChangeText={props.handleChange('position')}
+              value={props.values.position}
+              onBlur={props.handleBlur('position')}
+            />
+            <Text style = {styles.errorText}>{props.touched.position && props.errors.position}</Text>
+            <TextInput 
+              style={styles.formikInput}
+              multiline
+              placeholder='Comments: '
+              onChangeText={props.handleChange('comments')}
+              value={props.values.comments}
+              onBlur={props.handleBlur('comments')}
+            />
+            <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
+
+            
+            <Button title='Submit' onPress={props.handleSubmit} />
+          </KeyboardAwareScrollView>
+        )}
+      </Formik>
+    </View>
+  )
+}
+
+function LeadershipInfo({route})
+{
+  const {item} = route.params;
+
+  
+
+  return(
+    <View>
+    <Card>
+      <View>
+      
+        <Text>Position: {item.position}</Text>
+        <Text>Comments: {item.comments} </Text>
+
+      </View>
+    </Card>
+    </View>
+    
+  );
+}
+
+function AdditionalInfo({navigation})
+{
+  const [aI, setAI] = useState([]);
+  const [modalOpen, setModalOpen] = useState(true);
+  useEffect(() => {
+    loadAI(); 
+  }, []); 
+
+  const loadAI = async () => {
+    console.log("load AI called");
+    try {
+      const storedAI = await AsyncStorage.getItem("storedAI");
+      if (storedAI !== null) {
+        setAI(JSON.parse(storedAI));
+       
+      }
+      
+    } catch (e) {
+      alert('Failed to fetch the input from storage: ' + e);
+    }
+  };
+  const addAI = async (ai) => {
+    ai.key = Math.random().toString();
+    const newAI = [...aI, ai];
+
+    try {
+      await AsyncStorage.setItem("storedAI", JSON.stringify(newAI));
+      setAI(newAI);
+      setModalOpen(false);
+      console.log({ aI: newAI });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const removeAI = async (ai) => {
+    try {
+      const newAI = aI.filter(item => item !== ai);
+
+      await AsyncStorage.setItem("storedAI", JSON.stringify(newAI));
+      setAI(newAI);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return(
+    //  <Sandbox />
+      <TouchableWithoutFeedback onPress={() => {
+        Keyboard.dismiss();
+        console.log('keyboard dismissed');
+      }}>
+      <View>
+        
+          <FlatList data = {aI} renderItem = {({item}) => (
+            <Card>
+              <TouchableOpacity onPress={()=>Alert.alert(
+                'Are you sure you want to delete this?',
+                'You cannot undo this action.',
+                [
+                  {
+                    text: 'No',
+                    onPress: () => console.log('Cancelled'),
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'Yes',
+                    onPress: () => removeAI(item),
+                  }
+                ], 
+                { cancelable: 'false'}
+              )}>
+                  <MaterialIcons name = 'delete' size={30} color = "red"  />
+                  <Text style={styles.infoSubtitle}>{item.comments}</Text>
+              </TouchableOpacity>
+            </Card>
+          )}/>
+          <Modal visible={modalOpen} animationType="slide">
+            <ScrollView>
+              <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+                <View style={styles.modalContent}>
+                  <MaterialIcons
+                    name="close"
+                    size={50}
+                    color="black"
+                    style={{ ...styles.modalToggle, ...styles.modalClose }}
+                    onPress={() => setModalOpen(false)}
+                  />
+                  <AIForm addAI={addAI}/>
+                 </View>
+              </TouchableWithoutFeedback>
+            </ScrollView>
+          </Modal>
+          <ScrollView>
+            <Text>
+              
+              <View style={{ paddingLeft: 170, paddingTop: 20 }}>
+                <TouchableOpacity>
+                </TouchableOpacity>
+              </View>
+            </Text>
+          </ScrollView>
+      </View>
+    </TouchableWithoutFeedback>
+    )
+}
+
+function AIForm({addAI})
+{
+  const AISchema = yup.object({
+    comments: yup.string().required(),
+  })
+
+  return(
+    <View>
+      <Formik
+        initialValues={{comments: ''}}
+        validationSchema={AISchema}
+        onSubmit={(values) => {
+          console.log(values);
+          addAI(values);
+        }}
+      >
+      {(props) => (
+        <KeyboardAwareScrollView>
+        <TextInput 
+              style={styles.formikInput}
+              multiline
+              placeholder='Additional Info: '
+              onChangeText={props.handleChange('comments')}
+              value={props.values.comments}
+              onBlur={props.handleBlur('comments')}
+            />
+            <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
+
+            
+            <Button title='Submit' onPress={props.handleSubmit} />
+          </KeyboardAwareScrollView>
+        )}
+      </Formik>
+    </View>
+  )
+}
+
 const Stack = createNativeStackNavigator();
 
 
@@ -1901,6 +2408,12 @@ export default function App() {
         <Stack.Screen name = "Awards/Certificates Info" component = {AwardsCertificatesInfo}/>
         <Stack.Screen name = "Skills/Academic Achievements" component ={SA}/>
         <Stack.Screen name = "Skill/Academic Achievements Info" component = {SAInfo}/>
+        <Stack.Screen name = "Music/Artistic Achievements" component ={MA}/>
+        <Stack.Screen name = "Music/Artistic Achievements Info" component = {MAInfo}/>
+        <Stack.Screen name = "Leadership" component={Leadership}/>
+        <Stack.Screen name = "Leadership Info" component={LeadershipInfo}/>
+        <Stack.Screen name = "Additional Information" component={AdditionalInfo}/>
+
       </Stack.Navigator>
     </NavigationContainer>
    

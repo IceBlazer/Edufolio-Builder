@@ -9,7 +9,7 @@ import React, {useState, useEffect} from 'react';
 import { Linking, Platform, ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Dimensions, TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity, useWindowDimensions} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {Ionicons, MaterialIcons, AntDesign, Feather} from '@expo/vector-icons';
+import {EvilIcons, Ionicons, MaterialIcons, AntDesign, Feather} from '@expo/vector-icons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Formik} from 'formik';
 import * as yup from 'yup';
@@ -141,7 +141,7 @@ function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the
                 <Card>
                 <TouchableOpacity>
                   <View style = {styles.rightIcon}>
-                  <AntDesign name = 'right' size={30} />
+                  <AntDesign name = 'right' size={30} onPress={() => navigation.navigate(item.name)}/>
                   </View>
                 </TouchableOpacity>
                 <Text style={styles.portfolioBuilderCard}>{item.name}</Text>
@@ -2678,7 +2678,7 @@ const selectPrinter = async () => {
           options={{
             headerRight: (props) => (
               <TouchableOpacity>
-                <Feather name="check-circle" size={24} color="blue" style = {{paddingRight: 10}} onPress={printToFile}  />
+                <EvilIcons name="share-apple" size={40} color="black" style = {{paddingRight: 10}} onPress={printToFile}  />
                 {/* onPress={printToFile} */}
               </TouchableOpacity>
             )

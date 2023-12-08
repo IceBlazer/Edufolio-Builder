@@ -6,7 +6,7 @@
 import React, {useState, useEffect} from 'react';
 
 // import {StatusBar} from 'expo-status-bar'
-import { Linking, Platform, ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Dimensions, TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity} from 'react-native';
+import { Linking, Platform, ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Dimensions, TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity, useWindowDimensions} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {Ionicons, MaterialIcons, AntDesign, Feather} from '@expo/vector-icons';
@@ -14,6 +14,11 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+//import { printToFileAsync} from 'react-native';
+import { shareAsync} from 'expo-sharing';
+import * as Print from 'expo-print';
+import RenderHtml from 'react-native-render-html';
+
 import AddSection from './components/addSection'
 import SectionItem from './components/sectionItem'
 import Sandbox from './components/sandbox'
@@ -45,6 +50,7 @@ function HomeScreen({navigation}) { //homeScreen
         title = "Start"
         onPress={() => navigation.navigate('Portfolio List')}
       />
+      
       <Text style = {{fontWeight: 'bold'}}>Todo List: </Text>
       <Text style = {{fontWeight: 'bold'}}>- Add function to generate portfolio somehow</Text>
       <Text style = {{fontWeight: 'bold'}}>- Make app look good</Text>
@@ -113,6 +119,8 @@ function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the
 
   ])
 
+  
+
   return (
     <TouchableWithoutFeedback onPress={() => {
       Keyboard.dismiss();
@@ -120,7 +128,10 @@ function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the
     }}>
     <View style={styles.portfolioBuilderContainer}>
     
-    <AddSection /> 
+    <Button 
+        title = "View Portfolio"
+        onPress={() => navigation.navigate('Portfolio Viewer')} // go to line 2606 for the HTML Code, still WIP
+      /> 
       <View style = {styles.content}>
         <View style = {styles.list}>
           <FlatList 
@@ -2590,11 +2601,65 @@ function AIForm({addAI})
   )
 }
 
+function PortfolioViewer()
+{
+  const source = {
+    html: `
+  <p style='text-align:center;'>
+    Hello World!
+  </p>`
+  };
+
+  const { width} = useWindowDimensions();
+  return (
+    <RenderHtml contentWidth={width} source={source}/>
+  );
+}
+
 const Stack = createNativeStackNavigator();
 
 
-export default function App() {
+export default function App({navigation}) {
 
+  const html = `
+  
+  <html>
+    <body>
+      <h1>Hi buddy </h1>
+      <p style="color red;">Hello. Bonjour. </p>
+    </body
+  </html>
+`;
+
+const generatePDF = async () => {
+  console.log('print pdf called');
+  const file = await printToFileAsync({
+    html: html,
+    base64: false
+  });
+
+  await shareAsync(file.uri);
+}
+
+const [selectedPrinter, setSelectedPrinter] = useState();
+
+const print = async () => {
+  await Print.printAsync({
+    html,
+    printerUrl: selectedPrinter?.url,
+  });
+};
+
+const printToFile = async () => {
+  const {uri} = await Print.printToFileAsync({html});
+  console.log('File has been saved to:', uri);
+    await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
+};
+
+const selectPrinter = async () => {
+  const printer = await Print.selectPrinterAsync(); // iOS only
+  setSelectedPrinter(printer);
+};
 
     
   return (
@@ -2607,7 +2672,17 @@ export default function App() {
           options={{ headerTitle: (props) => <Header {...props} />, headerBackTitleVisible: false}}
         />
         <Stack.Screen name = "Portfolio List" component={PortfolioList} />
-        <Stack.Screen name = "Portfolio 1 Builder" component={Portfolio1Builder}/>
+        <Stack.Screen 
+          name = "Portfolio 1 Builder" 
+          component={Portfolio1Builder} 
+          options={{
+            headerRight: (props) => (
+              <TouchableOpacity>
+                <Feather name="check-circle" size={24} color="blue" style = {{paddingRight: 10}} onPress={printToFile}  />
+                {/* onPress={printToFile} */}
+              </TouchableOpacity>
+            )
+        }} />
         <Stack.Screen 
           name = "Personal Info"
           component={PersonalInfo}
@@ -2632,6 +2707,7 @@ export default function App() {
         <Stack.Screen name = "Additional Information" component={AdditionalInfo}/>
         <Stack.Screen name = "Honors Classes" component={HC}/>
         <Stack.Screen name = "Honors Classes Info" component={HCInfo}/>
+        <Stack.Screen name = "Portfolio Viewer" component={PortfolioViewer}/>
 
       </Stack.Navigator>
     </NavigationContainer>

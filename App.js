@@ -9,7 +9,7 @@ import React, {useState, useEffect} from 'react';
 import { Linking, Platform, ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Dimensions, TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity, useWindowDimensions} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {EvilIcons, Ionicons, MaterialIcons, AntDesign, Feather} from '@expo/vector-icons';
+import {Entypo, EvilIcons, Ionicons, MaterialIcons, AntDesign, Feather} from '@expo/vector-icons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Formik} from 'formik';
 import * as yup from 'yup';
@@ -3119,15 +3119,22 @@ const selectPrinter = async () => {
         <Stack.Screen name = "Portfolio List" component={PortfolioList} />
         <Stack.Screen 
           name = "Portfolio 1 Builder" 
-          component={Portfolio1Builder} 
-          options={{
-            headerRight: (props) => (
+          component={Portfolio1Builder} //onPress={printToFile}
+          options={({ navigation }) => ({
+            headerRight: () => (
               <TouchableOpacity>
-                <EvilIcons name="share-apple" size={40} color="black" style = {{paddingRight: 10}} onPress={printToFile}  />
-                {/* onPress={printToFile} */}
+                <Feather
+                  name="check"
+                  size={40}
+                  style={{ paddingRight: 10 }}
+                  color="blue"
+                  onPress={() => navigation.navigate('Portfolio Viewer')}
+                />
               </TouchableOpacity>
-            )
-        }} />
+            ),
+          })}
+
+          />
         <Stack.Screen 
           name = "Personal Info"
           component={PersonalInfo}

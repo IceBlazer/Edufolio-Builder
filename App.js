@@ -17,6 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 //import { printToFileAsync} from 'react-native';
 import { shareAsync} from 'expo-sharing';
 import * as Print from 'expo-print';
+import { AppProvider, useAppContext } from './AppContext';
 import RenderHtml from 'react-native-render-html';
 
 import AddSection from './components/addSection'
@@ -2609,10 +2610,106 @@ function PortfolioViewer()
     Hello World!
   </p>`
   };
-
   const { width} = useWindowDimensions();
+
+  const { state, dispatch } = useAppContext();
+  const { personalInfo,
+        sports,
+        educations,
+        volunteerServices, 
+        ecs, 
+        acs, 
+        sas, 
+        mas, 
+        leaderships, 
+        hcs, 
+        aI} = state;
+  
+  const fetchData = async () => {
+    try {
+      const storedPersonalInfo = await AsyncStorage.getItem("storedPersonalInfo");
+      const storedSports = await AsyncStorage.getItem("storedSports");
+      const storedEducations = await AsyncStorage.getItem("storedEducations");
+      const storedVolunteerServices = await AsyncStorage.getItem("storedVolunteerServices");
+      const storedECS = await AsyncStorage.getItem("storedECS");
+      const storedACS = await AsyncStorage.getItem("storedACS");
+      const storedMAS = await AsyncStorage.getItem("storedMAS");
+      const storedLeaderships = await AsyncStorage.getItem("storedLeaderships");
+      const storedHCS = await AsyncStorage.getItem("storedHCS");
+      const storedAI = await AsyncStorage.getItem("storedAI");
+
+      if (storedPersonalInfo !== null) {
+        const personalInfoData = JSON.parse(storedPersonalInfo);
+        
+        dispatch({ type: 'SET_PERSONALINFO', payload: personalInfoData });
+      }
+      if (storedSports !== null) {
+        const sportsData = JSON.parse(storedSports);
+       
+        dispatch({ type: 'SET_SPORTS', payload: sportsData });
+      }
+      if (storedEducations !== null) {
+        const educationsData = JSON.parse(storedEducations);
+       
+        dispatch({ type: 'SET_EDUCATIONS', payload: educationsData });
+      }
+      if (storedVolunteerServices !== null) {
+        const volunteerServicesData = JSON.parse(storedVolunteerServices);
+       
+        dispatch({ type: 'SET_VOLUNTEERSERVICES', payload: volunteerServicesData });
+      }
+      if (storedECS !== null) {
+        const ecsData = JSON.parse(storedECS);
+       
+        dispatch({ type: 'SET_ECS', payload: ecsData });
+      }
+      if (storedACS !== null) {
+        const acsData = JSON.parse(storedACS);
+       
+        dispatch({ type: 'SET_ACS', payload: acsData });
+      }
+      if (storedMAS !== null) {
+        const masData = JSON.parse(storedMAS);
+       
+        dispatch({ type: 'SET_MAS', payload: masData });
+      }
+      if (storedLeaderships !== null) {
+        const leadershipsData = JSON.parse(storedLeaderships);
+       
+        dispatch({ type: 'SET_LEADERSHIPS', payload: leadershipsData });
+      }
+      if (storedHCS !== null) {
+        const hcsData = JSON.parse(storedHCS);
+        // Update the global state or perform any other actions with the fetched HCS data
+        dispatch({ type: 'SET_HCS', payload: hcsData });
+      }
+
+      if (storedAI !== null) {
+        const aiData = JSON.parse(storedAI);
+        // Update the global state or perform any other actions with the fetched AI data
+        dispatch({ type: 'SET_AI', payload: aiData });
+      }
+    } catch (error) {
+      console.log('Error fetching data:', error);
+    }
+      
+  
+    }
+  
+    useEffect(() => {
+      fetchData();
+    }, []);
+
+    
+
+
   return (
-    <RenderHtml contentWidth={width} source={source}/>
+    
+    //  <RenderHtml contentWidth={width} source={source}/> 
+    <View>
+      <Text>{JSON.stringify(hcs)}</Text>
+    </View>
+    
   );
 }
 
@@ -2620,7 +2717,7 @@ const Stack = createNativeStackNavigator();
 
 
 export default function App({navigation}) {
-
+  
   const html = `
   
   <html>
@@ -2663,7 +2760,7 @@ const selectPrinter = async () => {
 
     
   return (
-    
+    <AppProvider>
     <NavigationContainer>
       <Stack.Navigator >
         <Stack.Screen 
@@ -2711,7 +2808,7 @@ const selectPrinter = async () => {
 
       </Stack.Navigator>
     </NavigationContainer>
-   
+    </AppProvider>
     
     
    /* <View style={styles.container}>

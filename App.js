@@ -2624,6 +2624,8 @@ function PortfolioViewer()
         leaderships, 
         hcs, 
         aI} = state;
+  const [hcsData, setHCSData] = useState([]);
+  const [aiData, setAIData] = useState([]);
   
   const fetchData = async () => {
     try {
@@ -2680,12 +2682,14 @@ function PortfolioViewer()
       }
       if (storedHCS !== null) {
         const hcsData = JSON.parse(storedHCS);
+        setHCSData(hcsData);
         // Update the global state or perform any other actions with the fetched HCS data
         dispatch({ type: 'SET_HCS', payload: hcsData });
       }
 
       if (storedAI !== null) {
         const aiData = JSON.parse(storedAI);
+        setAIData(aiData);
         // Update the global state or perform any other actions with the fetched AI data
         dispatch({ type: 'SET_AI', payload: aiData });
       }
@@ -2700,14 +2704,53 @@ function PortfolioViewer()
       fetchData();
     }, []);
 
-    
+   
 
+    const renderItem = ({ item }) => {
+      // Render individual properties of each object
+      const properties = Object.entries(item).map(([key, value]) => (
+        <Text key={key}>
+          {key}: {value}
+        </Text>
+      ));
+  
+      return (
+        <View>
+          {/* Display properties of each object */}
+          {properties}
+          {/* Add styling or other components as needed */}
+        </View>
+      );
+    };
+    
 
   return (
     
     //  <RenderHtml contentWidth={width} source={source}/> 
     <View>
-      <Text>{JSON.stringify(hcs)}</Text>
+      {hcsData.length > 0 && (
+        <>
+          <Text>HCS Data:</Text>
+          <FlatList
+            data={hcsData}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </>
+      )}
+
+      {aiData.length > 0 && (
+        <>
+          <Text>AI Data:</Text>
+          <FlatList
+            data={aiData}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </>
+      )}
+
+      {/* Other UI components */}
     </View>
     
   );

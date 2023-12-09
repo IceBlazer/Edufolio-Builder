@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { shareAsync} from 'expo-sharing';
 import * as Print from 'expo-print';
 import { AppProvider, useAppContext } from './AppContext';
+import HTML from 'react-native-render-html';
 import RenderHtml from 'react-native-render-html';
 
 import AddSection from './components/addSection'
@@ -331,6 +332,8 @@ function PersonalInfoForm({addPersonalInfo}, {personalInfo})
             <TextInput 
               style={styles.formikInput}
               placeholder='Phone Number: '
+              maxLength={15}
+              minLength={5} 
               onChangeText={props.handleChange('phoneNum')}
               value={props.values.phoneNum}
               onBlur={props.handleBlur('phoneNum')}
@@ -2300,7 +2303,7 @@ function HC({navigation})
       data={hcs}
       renderItem={({item}) =>(
         <Card>
-        <TouchableOpacity onPress={() => navigation.navigate('Extracurricular Activities Info', {item})}>
+        <TouchableOpacity onPress={() => navigation.navigate('Honors Classes Info', {item})}>
         <TouchableOpacity onPress={()=>Alert.alert(
               'Are you sure you want to delete this?',
               'You cannot undo this action.',
@@ -2611,6 +2614,45 @@ function PortfolioViewer()
   </p>`
   };
   const { width} = useWindowDimensions();
+  const labelMappings = {
+      
+    firstName: 'First Name',
+    lastName: 'Last Name',
+    phoneNum: 'Phone Number',
+    email: 'Email',
+    address: 'Address',
+
+    
+    sportName: 'Sport Name',
+    avgHrsPerWeek: 'Average Hours per Week',
+    totalHrs: 'Total Hours',
+    gradesParticipated: 'Grades Participated',
+
+    
+    className: 'Class Name',
+    schoolName: 'School Name',
+    beginningGrade: 'Beginning Grade',
+    dateReceived: 'Date Received',
+    dateAwarded: 'Date Awarded',
+    gradesReceived: 'Grades Received',
+    SAName: 'Skill/Academic Achievement',
+    MAName: 'Music/Artistic Achievement',
+
+  
+    organization: 'Organization',
+    location: 'Location',
+
+
+
+    
+    positionTitle: 'Position Title',
+    activity: 'Activity',
+    awardName: 'Award Name',
+    
+    startDate: 'Start Date',
+    endDate: 'End Date',
+    comments: 'Comments',
+  };
 
   const { state, dispatch } = useAppContext();
   const { personalInfo,
@@ -2624,17 +2666,31 @@ function PortfolioViewer()
         leaderships, 
         hcs, 
         aI} = state;
+    const [sections, setSections] = useState([]);
+
+   
+  const [personalInfoData, setPersonalInfoData] = useState([]);
+  const [sportsData, setSportsData] = useState([]);
+  const[educationsData, setEducationsData] = useState([]);
+  const [volunteerServicesData, setVolunteerServicesData] = useState([]);
+  const [ecsData, setECSData] = useState([]);
+  const [acsData, setACSData] = useState([]);
+  const [sasData, setSASData] = useState([]);
+  const [masData, setMASDATA] = useState([]);
+  const [leadershipsData, setLeadershipsData] = useState([]);
   const [hcsData, setHCSData] = useState([]);
   const [aiData, setAIData] = useState([]);
   
   const fetchData = async () => {
     try {
+      const newSections = [];
       const storedPersonalInfo = await AsyncStorage.getItem("storedPersonalInfo");
       const storedSports = await AsyncStorage.getItem("storedSports");
       const storedEducations = await AsyncStorage.getItem("storedEducations");
       const storedVolunteerServices = await AsyncStorage.getItem("storedVolunteerServices");
       const storedECS = await AsyncStorage.getItem("storedECS");
       const storedACS = await AsyncStorage.getItem("storedACS");
+      const storedSAS = await AsyncStorage.getItem("storedSAS");
       const storedMAS = await AsyncStorage.getItem("storedMAS");
       const storedLeaderships = await AsyncStorage.getItem("storedLeaderships");
       const storedHCS = await AsyncStorage.getItem("storedHCS");
@@ -2642,57 +2698,117 @@ function PortfolioViewer()
 
       if (storedPersonalInfo !== null) {
         const personalInfoData = JSON.parse(storedPersonalInfo);
-        
+       // setPersonalInfoData(personalInfoData);
+       if(personalInfoData.length > 0)
+       {
+        newSections.push({ title: 'Personal Info Data', data: personalInfoData });
         dispatch({ type: 'SET_PERSONALINFO', payload: personalInfoData });
+       }
+       
       }
       if (storedSports !== null) {
         const sportsData = JSON.parse(storedSports);
-       
+      //  setSportsData(sportsData);
+      if(sportsData.length > 0)
+      {
+        newSections.push({ title: 'Sports Data', data: sportsData });
         dispatch({ type: 'SET_SPORTS', payload: sportsData });
+      }
+ 
       }
       if (storedEducations !== null) {
         const educationsData = JSON.parse(storedEducations);
+       // setEducationsData(educationsData);
+       if(educationsData.length > 0)
+       {
+        newSections.push({ title: 'Educations Data', data: educationsData });
        
         dispatch({ type: 'SET_EDUCATIONS', payload: educationsData });
+       }
+       
       }
       if (storedVolunteerServices !== null) {
         const volunteerServicesData = JSON.parse(storedVolunteerServices);
-       
+       //setVolunteerServicesData(volunteerServicesData);
+       if(volunteerServicesData.length > 0)
+       {
+        newSections.push({ title: 'Volunteer Services Data', data: volunteerServicesData });
         dispatch({ type: 'SET_VOLUNTEERSERVICES', payload: volunteerServicesData });
+       }
+       
       }
       if (storedECS !== null) {
         const ecsData = JSON.parse(storedECS);
-       
+        //setECSData(ecsData);
+        if(ecsData.length > 0)
+       {
+        newSections.push({ title: 'ECS Data', data: ecsData });
         dispatch({ type: 'SET_ECS', payload: ecsData });
+       }
+        
       }
       if (storedACS !== null) {
         const acsData = JSON.parse(storedACS);
-       
+       //setACSData(acsData);
+       if(acsData.length > 0)
+       {
+        newSections.push({ title: 'ACS Data', data: acsData });
         dispatch({ type: 'SET_ACS', payload: acsData });
+       }
+       
+      }
+      if (storedSAS !== null) {
+        const sasData = JSON.parse(storedSAS);
+      // setSASData(sasData);
+        if(sasData.length > 0)
+        {
+          newSections.push({ title: 'SAS Data', data: sasData });
+          dispatch({ type: 'SET_SAS', payload: sasData });
+        }
+      
       }
       if (storedMAS !== null) {
         const masData = JSON.parse(storedMAS);
+      // setMASDATA(masData);
+        if(masData.length > 0)
+        {
+          newSections.push({ title: 'MAS Data', data: masData });
+          dispatch({ type: 'SET_MAS', payload: masData });
+        }
        
-        dispatch({ type: 'SET_MAS', payload: masData });
       }
       if (storedLeaderships !== null) {
         const leadershipsData = JSON.parse(storedLeaderships);
+        //setLeadershipsData(leadershipsData);
+        if(leadershipsData.length > 0)
+        {
+          newSections.push({ title: 'Leaderships Data', data: leadershipsData });
+          dispatch({ type: 'SET_LEADERSHIPS', payload: leadershipsData });
+        }
        
-        dispatch({ type: 'SET_LEADERSHIPS', payload: leadershipsData });
       }
       if (storedHCS !== null) {
         const hcsData = JSON.parse(storedHCS);
-        setHCSData(hcsData);
+        //setHCSData(hcsData);
+        if(hcsData.length > 0) {
+          newSections.push({ title: 'HCS Data', data: hcsData });
         // Update the global state or perform any other actions with the fetched HCS data
         dispatch({ type: 'SET_HCS', payload: hcsData });
+        }
+        
       }
 
       if (storedAI !== null) {
         const aiData = JSON.parse(storedAI);
-        setAIData(aiData);
+       // setAIData(aiData);
+       if(aiData.length > 0) {
+        newSections.push({ title: 'AI Data', data: aiData });
         // Update the global state or perform any other actions with the fetched AI data
         dispatch({ type: 'SET_AI', payload: aiData });
+       }
+        
       }
+      setSections(prevSections => [...prevSections, ...newSections]);
     } catch (error) {
       console.log('Error fetching data:', error);
     }
@@ -2705,7 +2821,7 @@ function PortfolioViewer()
     }, []);
 
    
-
+    const renderLabel = (key) => labelMappings[key] || key;
     const renderItem = ({ item }) => {
       // Render individual properties of each object
       const properties = Object.entries(item).map(([key, value]) => (
@@ -2713,29 +2829,206 @@ function PortfolioViewer()
           {key}: {value}
         </Text>
       ));
+       const { MAName, dateAwarded, SAName, activity, awardName, dateReceived, gradesReceived, positionTitle, organization, schoolName, location, beginningGrade, 
+        sportName, avgHrsPerWeek, totalHrs, gradesParticipated, firstName, lastName, address, phoneNum, email, className, startDate, endDate, comments } = item;
   
+      // const { className, startDate, endDate, comments} = item;
       return (
         <View>
+          <Card>
           {/* Display properties of each object */}
-          {properties}
+         {item.firstName && <Text>First Name: {item.firstName}</Text>}
+         {item.lastName  && <Text>Last Name: {item.lastName}</Text>}
+         {item.phoneNum  && <Text>Phone Number: {item.phoneNum}</Text>}
+         {item.email  && <Text>Email: {item.email}</Text>}
+         {item.organization  && <Text>Organization: {item.organization}</Text>}
+         {item.className && <Text>Class Name: {item.className}</Text>}
+          {item.MAName && <Text>Music/Artistic Achievement: {item.MAName}</Text>}
+         {item.SAName  && <Text>Skill/Academic Achievement: {item.SAName}</Text>}
+         {item.positionTitle  &&<Text>Position Title: {item.positionTitle}</Text>}
+         {item.activity  && <Text>Activity: {item.activity}</Text>}
+         {item.awardName  && <Text>Award Name: {item.awardName}</Text>}
+         {item.schoolName && <Text>School Name: {item.schoolName}</Text>}
+         {item.sportName  && <Text>Sport Name: {item.sportName}</Text>}
+
+         {item.organization && <Text>Organization: {item.organization}</Text>}
+         {item.location  && <Text>Location: {item.location}</Text>}
+
+         {item.beginningGrade && <Text>Beginning Grade: {item.beginningGrade}</Text>}
+
+         {item.dateReceived  && <Text>Date Received: {item.dateReceived}</Text>}
+         {item.dateAwarded  && <Text>Date Awarded: {item.dateAwarded}</Text>} 
+         {item.startDate && <Text>Start Date: {item.startDate}</Text>}
+         {item.endDate && <Text>End Date: {item.endDate}</Text>}
+
+          {item.avgHrsPerWeek && <Text>Average Hours per Week: {item.avgHrsPerWeek}</Text>}
+         {item.totalHrs  && <Text>Total Hours: {item.totalHrs}</Text>}
+
+         {item.gradesReceived  && <Text>Grades Received: {item.gradesReceived}</Text>}
+         {item.gradesParticipated && <Text>Grades Participated: {item.gradesParticipated}</Text>} 
+
+         {item.comments && <Text>Comments: {item.comments}</Text>}
+          
           {/* Add styling or other components as needed */}
+          </Card>
         </View>
       );
     };
-    
-
+   
   return (
     
     //  <RenderHtml contentWidth={width} source={source}/> 
     <View>
+      <ScrollView>
+  {sections.map((section, sectionIndex) => (
+    section.data.length > 0 && (
+      <View key={sectionIndex} style={{ marginBottom: 20 }}>
+        <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{section.title}</Text>
+        {section.data.map((item, itemIndex) => (
+          <View key={itemIndex} style={{ marginVertical: 5 }}>
+            <Card>
+              {Object.entries(item).map(([key, value]) => (
+                // Conditionally render if the value exists and is not empty
+                value && (
+                  <Text key={key}>{renderLabel(key)}: {value}</Text>
+                )
+              ))}
+            </Card>
+          </View>
+        ))}
+      </View>
+    )
+  ))}
+</ScrollView>
+    {/* {personalInfoData.length > 0 && (
+          <>
+          
+            <Text>Personal Info Data:</Text>
+            
+            <FlatList
+              data={personalInfoData}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          
+          </>
+        )}
+        {sportsData.length > 0 && (
+          <>
+          
+            <Text>Sports Data:</Text>
+            
+            <FlatList
+              data={sportsData}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          
+          </>
+        )}
+        
+       {educationsData.length > 0 && (
+          <>
+          
+            <Text>Education Data:</Text>
+            
+            <FlatList
+              data={educationsData}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          
+          </>
+        )}
+        {volunteerServicesData.length > 0 && (
+          <>
+          
+            <Text>Volunteer Services Data:</Text>
+            
+            <FlatList
+              data={volunteerServicesData}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          
+          </>
+        )}
+        {ecsData.length > 0 && (
+          <>
+          
+            <Text>ECS Data:</Text>
+            
+            <FlatList
+              data={ecsData}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          
+          </>
+        )}
+        {acsData.length > 0 && (
+          <>
+          
+            <Text>ACS Data:</Text>
+            
+            <FlatList
+              data={acsData}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          
+          </>
+        )}
+        {sasData.length > 0 && (
+          <>
+          
+            <Text>SAS Data:</Text>
+            
+            <FlatList
+              data={sasData}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          
+          </>
+        )}
+        {masData.length > 0 && (
+          <>
+          
+            <Text>MAS Data:</Text>
+            
+            <FlatList
+              data={masData}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          
+          </>
+        )}
+        {leadershipsData.length > 0 && (
+          <>
+          
+            <Text>Leadership Data:</Text>
+            
+            <FlatList
+              data={leadershipsData}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          
+          </>
+        )}
       {hcsData.length > 0 && (
         <>
           <Text>HCS Data:</Text>
+          
           <FlatList
+            
             data={hcsData}
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
           />
+        
         </>
       )}
 
@@ -2748,9 +3041,10 @@ function PortfolioViewer()
             keyExtractor={(item, index) => index.toString()}
           />
         </>
-      )}
+      )} */}
 
       {/* Other UI components */}
+      
     </View>
     
   );

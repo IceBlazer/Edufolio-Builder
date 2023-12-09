@@ -170,7 +170,7 @@ function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the
 function PersonalInfo({navigation}) //Personal Info Screen
 {
   const [personalInfo, setPersonalInfo] = useState([]);
-  const [modalOpen, setModalOpen] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
   useEffect(() => {
     loadPersonalInfo(); 
   }, []); 
@@ -246,6 +246,14 @@ function PersonalInfo({navigation}) //Personal Info Screen
             </TouchableOpacity>
           </Card>
         )}/>
+      {personalInfo.length === 0 && (
+          <TouchableOpacity
+            style={{alignItems: 'center'}}
+            onPress={() => setModalOpen(true)}
+          >
+            <Ionicons name="md-add-circle-outline" size={50} color="black" />
+          </TouchableOpacity>
+        )}      
         <Modal visible={modalOpen} animationType="slide">
           <ScrollView>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -333,7 +341,8 @@ function PersonalInfoForm({addPersonalInfo}, {personalInfo})
               style={styles.formikInput}
               placeholder='Phone Number: '
               maxLength={15}
-              minLength={5} 
+              minLength={5}
+              keyboardType='numeric'
               onChangeText={props.handleChange('phoneNum')}
               value={props.values.phoneNum}
               onBlur={props.handleBlur('phoneNum')}

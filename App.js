@@ -9,7 +9,7 @@ import React, {useState, useEffect} from 'react';
 import { Linking, Platform, ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Dimensions, TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity, useWindowDimensions} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {Entypo, EvilIcons, Ionicons, MaterialIcons, AntDesign, Feather} from '@expo/vector-icons';
+import {FontAwesome, Entypo, EvilIcons, Ionicons, MaterialIcons, AntDesign, Feather} from '@expo/vector-icons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Formik} from 'formik';
 import * as yup from 'yup';
@@ -103,9 +103,22 @@ function PortfolioList({navigation}) //Portfolio List Screen
   );
 }
 
-function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the sections (need to implement adding sections)
+function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the sections
 {
+  const iconMappings = {
+    'Personal Info': 'user-circle',
+    'Education': 'university',
+    'Volunteer Services': 'gratipay',
+    'Extracurricular Activities': 'puzzle-piece',
+    'Awards/Certificates': 'certificate',
+    'Skills/Academic Achievements': 'book',
+    'Music/Artistic Achievements': 'music',
+    'Athletic Achievements': 'soccer-ball-o',
+    'Leadership': 'users',
+    'Honors Classes': 'graduation-cap',
+    'Additional Information': 'info-circle',
 
+  };
   const [sections, setSection] = useState([
     { name: 'Personal Info', key: '1'},
     { name: 'Education', key: '2'},
@@ -128,20 +141,32 @@ function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the
       Keyboard.dismiss();
       //console.log('keyboard dismissed');
     }}>
+    
     <View style={styles.portfolioBuilderContainer}>
     
-    <Button 
+    {/* <Button 
         title = "View Portfolio"
         onPress={() => navigation.navigate('Portfolio Viewer')} // go to line 2606 for the HTML Code, still WIP
-      /> 
+      />  */}
+      <Text style = {{textAlign: 'center'}}>Click on any of the sections to start adding information!</Text>
+      <Text style = {{textAlign: 'center'}}>Press the check mark in the top right once you are done.</Text>
       <View style = {styles.content}>
         <View style = {styles.list}>
           <FlatList 
             data={sections}
             renderItem={({item}) => (
               <TouchableOpacity onPress={() => navigation.navigate(item.name)}>
-                <Card>
-                <TouchableOpacity>
+                <Card onPress={() => navigation.navigate(item.name)}>
+                <TouchableOpacity onPress={() => navigation.navigate(item.name)}>
+                  <View>
+                  {iconMappings[item.name] && (
+                          <FontAwesome
+                            name={iconMappings[item.name]}
+                            size={30}
+                            onPress={() => navigation.navigate(item.name)}
+                          />
+                          )}
+                  </View>
                   <View style = {styles.rightIcon}>
                   <AntDesign name = 'right' size={30} onPress={() => navigation.navigate(item.name)}/>
                   </View>
@@ -155,11 +180,7 @@ function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the
           />
         </View>
       </View>
-      <View>
-        <ScrollView>
-          <Text style = {{fontSize: 24}}>Add check marks in the header or a done button</Text>
-        </ScrollView>
-      </View>
+      
       
       
     </View>
@@ -3115,6 +3136,18 @@ const selectPrinter = async () => {
           name = "Home" 
           component={HomeScreen}
           options={{ headerTitle: (props) => <Header {...props} />, headerBackTitleVisible: false}}
+          // options={({props}) => ({
+          //   headerLeft: () => (
+              
+          //       <Image 
+          //         source={require('./assets/icon.png')}
+          //         style = {{paddingLeft: 5}}
+                  
+          //       />
+             
+          //   ),
+          //   headerTitle: (props) => <Header {...props} />, headerBackTitle: false
+          // })}
         />
         <Stack.Screen name = "Portfolio List" component={PortfolioList} />
         <Stack.Screen 

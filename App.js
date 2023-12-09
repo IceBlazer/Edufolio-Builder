@@ -2896,12 +2896,14 @@ function PortfolioViewer()
         {section.data.map((item, itemIndex) => (
           <View key={itemIndex} style={{ marginVertical: 5 }}>
             <Card>
-              {Object.entries(item).map(([key, value]) => (
-                // Conditionally render if the value exists and is not empty
-                value && (
-                  <Text key={key}>{renderLabel(key)}: {value}</Text>
-                )
-              ))}
+              {Object.entries(item)
+                .filter(([key]) => key !== 'key')
+                .map(([key, value]) => (
+                  // Conditionally render if the value exists and is not empty
+                  value && (
+                    <Text key={key}>{renderLabel(key)}: {value}</Text>
+                  )
+                ))}
             </Card>
           </View>
         ))}

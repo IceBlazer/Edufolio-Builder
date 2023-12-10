@@ -14,10 +14,12 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-//import { printToFileAsync} from 'react-native';
+import { printToFileAsync} from 'expo-print';
 import { shareAsync} from 'expo-sharing';
 import * as Print from 'expo-print';
 import { AppProvider, useAppContext } from './AppContext';
+import ViewShot from 'react-native-view-shot';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import HTML from 'react-native-render-html';
 import RenderHtml from 'react-native-render-html';
 
@@ -47,61 +49,31 @@ function HomeScreen({navigation}) { //homeScreen
 
     <ScrollView>
       <Text style={styles.homeText}>Welcome!</Text>
-      <Text>To start building your portfolio press Start.</Text>
+      <Text style={{textAlign:'center',}}>To start building your portfolio press Start.</Text>
       <Button 
         title = "Start"
-        onPress={() => navigation.navigate('Portfolio List')}
+        onPress={() => navigation.navigate('Portfolio Builder')}
+      />
+      <Image source=
+      {require("./assets/appicon.png")}
+      style={
+       {width:350,
+       height:350,
+       alignItems:'center',
+       flex: 1,
+      }
+      }
       />
       
-      <Text style = {{fontWeight: 'bold'}}>Todo List: </Text>
-      <Text style = {{fontWeight: 'bold'}}>- Add function to generate portfolio somehow</Text>
-      <Text style = {{fontWeight: 'bold'}}>- Make app look good</Text>
-      <Text style = {{fontWeight: 'bold'}}>- Create App Icon and Include Images</Text>
-      <Text style = {{fontWeight: 'bold'}}>- Add at least 2 social media app connections in the about me section</Text>
-      <Text style = {{fontWeight: 'bold'}}>- Implement add sections and make sections hide unless selected by the user to include in the portfolio</Text>
-
-
-
-      </ScrollView>
-    </View>
-  );
-}
-
-function PortfolioList({navigation}) //Portfolio List Screen
-{
-  const [portfolios, setPortfolio] = useState([
-    { name: 'Portfolio 1', key: '1'},
-  ]);
-
-
-  return(
-    
-    <View style = {styles.container}>
-    <ScrollView>
-    
-    { portfolios.map((item) => {
-      return (
-        <View key = {item.key}>
-          <TouchableOpacity onPress={() => navigation.navigate('Portfolio 1 Builder')}>
-          <View style = {styles.portfolioButton}>
-            <AntDesign name = 'right' size={30} />
-            <Text style = {styles.portfolioButtonText} >{item.name}</Text>
-          </View>
-          </TouchableOpacity>
-        </View>
-      )
-    })}
-
-    
-    
-      <Text>This will be the list of all the user's portfolios.</Text>
-      <Text>User can click on one portfolio and start adding/removing sections and editing.</Text>
       
+
+
       </ScrollView>
     </View>
-    
   );
 }
+
+
 
 function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the sections
 {
@@ -143,10 +115,7 @@ function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the
     
     <View style={styles.portfolioBuilderContainer}>
     
-    {/* <Button 
-        title = "View Portfolio"
-        onPress={() => navigation.navigate('Portfolio Viewer')} // go to line 2606 for the HTML Code, still WIP
-      />  */}
+    
       <Text style = {{textAlign: 'center'}}>Click on any of the sections to start adding information!</Text>
       <Text style = {{textAlign: 'center'}}>Press the check mark in the top right once you are done.</Text>
       <View style = {styles.content}>
@@ -309,7 +278,7 @@ function PersonalInfoForm({addPersonalInfo}, {personalInfo}) //actual form that 
   const personalSchema = yup.object({
     firstName: yup.string().required('This field is required.').min(2, 'Must be at least 2 characters'),
     lastName: yup.string().required('This field is required.').min(2, 'Must be at least 2 characters'),
-    address: yup.string().required('This field is required.').min(2, 'Must be at least 2 characters'),
+    address: yup.string().min(2, 'Must be at least 2 characters'),
     phoneNum: yup.number().required('This field is required.').positive(),
     email: yup.string().required('This field is required.').email("Invalid email address"),
 
@@ -541,29 +510,7 @@ function SportsForm({addSport}, {sports})
     
   })
 
-  // const save = async() => {
-  //   try{
-  //     await AsyncStorage.setItem("SportKey", sports)
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-
-  // const load = async () =>{
-  //   try {
-  //     let sport = await AsyncStorage.getItem("SportKey");
-  //     if(sport != null){
-
-  //       setSports(sport);
-  //     }
-  //   } catch(err) {
-  //     console.log(err);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   load();
-  // }, []);
+  
 
   return(
     <View>
@@ -573,7 +520,6 @@ function SportsForm({addSport}, {sports})
         onSubmit={(values) => {
           console.log(values);
           addSport(values);
-          //{save}
         }}
       >
         {(props) => (
@@ -684,15 +630,9 @@ function SportInfo({route,navigation})
 
 function Education({navigation})
 {
-  // const [educations, setEducations] = useState([
-  //   {schoolName: 'ETES', location: '900 Stribling Way', beginningGrade: '9', startDate: '2021/3/12', endDate: '2022/5/12', comments: 'idk', key: '1'},
-
-  // ])
   const [educations, setEducations] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
 
-
-  
 
   useEffect(() => {
     loadEducations(); 
@@ -906,7 +846,7 @@ function EducationsForm({addEducation})
   )
 }
 
-function EducationInfo({route, navigation})
+function EducationInfo({route})
 {
   
   const {item} = route.params;
@@ -932,10 +872,6 @@ function EducationInfo({route, navigation})
 
 function VolunteerServices({navigation})
 {
-  // const [volunteerServices, setVolunteerServices] = useState([
-  //   {positionTitle: 'Helper', organization: 'Target', location: '', startDate: '', endDate: '', totalHrs: '', gradesParticipated: '', comments: '', key: '1'},
-
-  // ])
   const [volunteerServices,setVolunteerServices] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -1059,7 +995,6 @@ function VolunteerServices({navigation})
     </TouchableWithoutFeedback>
   )
 }
-//positionTitle: '', organization: '', location: '', startDate: '', endDate: '', totalHrs: '', gradesParticipated: '', comments: ''
 function VolunteerServicesForm({addVolunteerServices})
 {
   const volunteerServicesSchema = yup.object({
@@ -2643,12 +2578,35 @@ function AIForm({addAI})
 
 function PortfolioViewer() // This screen is where user can see a collection of all the information they inputted as a list of all their notable achievements. 
 {
-  const source = { //display portfolio as a HTML file
-    html: `
-  <p style='text-align:center;'>
-    Hello World!
-  </p>`
-  };
+  // const viewShotRef = useRef(null);
+  // const handleSharePDF = async () => {
+  //   try {
+  //     // Capture the view
+  //     const imageURI = await viewShotRef.current.capture();
+
+  //     // Convert the image to PDF
+  //     const options = {
+  //       html: `<html><body><img src="${imageURI}" /></body></html>`,
+  //       fileName: 'portfolio',
+  //       directory: 'Documents',
+  //     };
+
+  //     const pdf = await RNHTMLtoPDF.convert(options);
+      
+  //     // Now you can share the generated PDF
+  //     // Use the appropriate share API for your use case (e.g., react-native-share)
+  //     // For simplicity, we'll just show an alert here
+  //     Alert.alert('PDF Generated', `PDF saved at: ${pdf.filePath}`);
+  //   } catch (error) {
+  //     console.error('Error generating PDF:', error);
+  //   }
+  // };
+  // const source = { //display portfolio as a HTML file
+  //   html: `
+  // <p style='text-align:center;'>
+  //   Hello World!
+  // </p>`
+  // };
   const { width} = useWindowDimensions();
   const labelMappings = {
       
@@ -2704,7 +2662,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
         aI} = state;
     const [sections, setSections] = useState([]);
 
-   
+   const newSections = [];
   const [personalInfoData, setPersonalInfoData] = useState([]);
   const [sportsData, setSportsData] = useState([]);
   const[educationsData, setEducationsData] = useState([]);
@@ -2737,7 +2695,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
        // setPersonalInfoData(personalInfoData);
        if(personalInfoData.length > 0)
        {
-        newSections.push({ title: 'Personal Info Data', data: personalInfoData });
+        newSections.push({ title: 'Personal Info:', data: personalInfoData });
         dispatch({ type: 'SET_PERSONALINFO', payload: personalInfoData });
        }
        
@@ -2747,7 +2705,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
       //  setSportsData(sportsData);
       if(sportsData.length > 0)
       {
-        newSections.push({ title: 'Sports Data', data: sportsData });
+        newSections.push({ title: 'Athletic Achievements:', data: sportsData });
         dispatch({ type: 'SET_SPORTS', payload: sportsData });
       }
  
@@ -2757,7 +2715,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
        // setEducationsData(educationsData);
        if(educationsData.length > 0)
        {
-        newSections.push({ title: 'Educations Data', data: educationsData });
+        newSections.push({ title: 'Education:', data: educationsData });
        
         dispatch({ type: 'SET_EDUCATIONS', payload: educationsData });
        }
@@ -2768,7 +2726,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
        //setVolunteerServicesData(volunteerServicesData);
        if(volunteerServicesData.length > 0)
        {
-        newSections.push({ title: 'Volunteer Services Data', data: volunteerServicesData });
+        newSections.push({ title: 'Volunteer Services:', data: volunteerServicesData });
         dispatch({ type: 'SET_VOLUNTEERSERVICES', payload: volunteerServicesData });
        }
        
@@ -2778,7 +2736,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
         //setECSData(ecsData);
         if(ecsData.length > 0)
        {
-        newSections.push({ title: 'ECS Data', data: ecsData });
+        newSections.push({ title: 'Extracurricular Activities:', data: ecsData });
         dispatch({ type: 'SET_ECS', payload: ecsData });
        }
         
@@ -2788,7 +2746,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
        //setACSData(acsData);
        if(acsData.length > 0)
        {
-        newSections.push({ title: 'ACS Data', data: acsData });
+        newSections.push({ title: 'Awards/Certificates:', data: acsData });
         dispatch({ type: 'SET_ACS', payload: acsData });
        }
        
@@ -2798,7 +2756,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
       // setSASData(sasData);
         if(sasData.length > 0)
         {
-          newSections.push({ title: 'SAS Data', data: sasData });
+          newSections.push({ title: 'Skills/Academic Achievements:', data: sasData });
           dispatch({ type: 'SET_SAS', payload: sasData });
         }
       
@@ -2808,7 +2766,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
       // setMASDATA(masData);
         if(masData.length > 0)
         {
-          newSections.push({ title: 'MAS Data', data: masData });
+          newSections.push({ title: 'Music/Artistic Achievements:', data: masData });
           dispatch({ type: 'SET_MAS', payload: masData });
         }
        
@@ -2818,7 +2776,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
         //setLeadershipsData(leadershipsData);
         if(leadershipsData.length > 0)
         {
-          newSections.push({ title: 'Leaderships Data', data: leadershipsData });
+          newSections.push({ title: 'Leaderships:', data: leadershipsData });
           dispatch({ type: 'SET_LEADERSHIPS', payload: leadershipsData });
         }
        
@@ -2827,7 +2785,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
         const hcsData = JSON.parse(storedHCS);
         //setHCSData(hcsData);
         if(hcsData.length > 0) {
-          newSections.push({ title: 'HCS Data', data: hcsData });
+          newSections.push({ title: 'Honors Classes:', data: hcsData });
         // Update the global state or perform any other actions with the fetched HCS data
         dispatch({ type: 'SET_HCS', payload: hcsData });
         }
@@ -2838,13 +2796,14 @@ function PortfolioViewer() // This screen is where user can see a collection of 
         const aiData = JSON.parse(storedAI);
        // setAIData(aiData);
        if(aiData.length > 0) {
-        newSections.push({ title: 'AI Data', data: aiData });
+        newSections.push({ title: 'Additional Information:', data: aiData });
         // Update the global state or perform any other actions with the fetched AI data
         dispatch({ type: 'SET_AI', payload: aiData });
        }
         
       }
-      setSections(prevSections => [...prevSections, ...newSections]);
+      //setSections(prevSections => [...prevSections, ...newSections]);
+      setSections(newSections);
     } catch (error) {
       console.log('Error fetching data:', error);
     }
@@ -2856,7 +2815,68 @@ function PortfolioViewer() // This screen is where user can see a collection of 
       fetchData();
     }, []);
 
+
+
+    
+    const [selectedPrinter, setSelectedPrinter] = useState();
+    
+    const print = async () => {
+      await Print.printAsync({
+        html,
+        printerUrl: selectedPrinter?.url,
+      });
+    };
+    
+    const printToFile = async () => {
+      const {uri} = await Print.printToFileAsync({html});
+      console.log('File has been saved to:', uri);
+        await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
+    };
+    
+    const selectPrinter = async () => {
+      const printer = await Print.selectPrinterAsync(); // iOS only
+      setSelectedPrinter(printer);
+    };
+
+    
+    const generateHtmlContent = (sections) => {
+      const content = sections.map((section, sectionIndex) => (
+        section.data.length > 0 && (
+          `<div key=${sectionIndex} style="margin-bottom: 20px;">
+            <h2>${section.title}</h2>
+            ${section.data.map((item, itemIndex) => (
+              `<div key=${itemIndex} style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+                ${Object.entries(item)
+                  .filter(([key]) => key !== 'key')
+                  .map(([key, value]) => (
+                    value && (
+                      `<p><strong>${labelMappings[key] || key}:</strong> ${value}</p>`
+                    )
+                  ))
+                  .join('')}
+              </div>`
+            )).join('')}
+          </div>`
+        )
+      ));
+    
+      return content.join('');
+    };
+
+  const html = generateHtmlContent(sections);
    
+  const generatePDF = async () => {
+    console.log('print pdf called');
+    const file = await printToFileAsync({
+      html: html,
+      base64: false
+    });
+  
+    await shareAsync(file.uri);
+  }
+  
+
+
     const renderLabel = (key) => labelMappings[key] || key;
     const renderItem = ({ item }) => {
       // Render individual properties of each object
@@ -2914,21 +2934,25 @@ function PortfolioViewer() // This screen is where user can see a collection of 
   return (
     
     //  <RenderHtml contentWidth={width} source={source}/> 
-    <View>
+    <View  style={styles.pViewerContainer}>
       <ScrollView>
+    
+      <TouchableOpacity>
+      <Feather name="share" size={50} color="black" onPress={generatePDF} style={{flex: 1, alignSelf: 'flex-end', borderRadius:5,borderWidth: 5,borderColor: "#ffff"}} />
+      </TouchableOpacity>
   {sections.map((section, sectionIndex) => (
     section.data.length > 0 && (
-      <View key={sectionIndex} style={{ marginBottom: 20 }}>
-        <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{section.title}</Text>
+      <View key={sectionIndex} style={styles.pViewerSectionContainer}>
+        <Text style={styles.pViewerSectionTitle}>{section.title}</Text>
         {section.data.map((item, itemIndex) => (
-          <View key={itemIndex} style={{ marginVertical: 5 }}>
-            <Card>
+          <View key={itemIndex} style={styles.pViewerCardContainer}>
+            <Card style={styles.pViewerCard}>
               {Object.entries(item)
                 .filter(([key]) => key !== 'key')
                 .map(([key, value]) => (
                   // Conditionally render if the value exists and is not empty
                   value && (
-                    <Text key={key}>{renderLabel(key)}: {value}</Text>
+                    <Text key={key} style = {styles.pViewerCardText}>{renderLabel(key)}: {value}</Text>
                   )
                 ))}
             </Card>
@@ -3094,18 +3118,17 @@ const Stack = createNativeStackNavigator(); //App runs on stack navigation
 export default function App({navigation}) { //main App function
   
   const html = `
-  
   <html>
     <body>
-      <h1>Hi buddy </h1>
-      <p style="color red;">Hello. Bonjour. </p>
+      <h1>Hi buddy</h1>
+      <p style="color red;">Hello. Bonjour.</p>
     </body
   </html>
 `;
 
 const generatePDF = async () => {
   console.log('print pdf called');
-  const file = await printToFileAsync({
+  const file = await Print.printToFileAsync({
     html: html,
     base64: false
   });
@@ -3157,9 +3180,9 @@ const selectPrinter = async () => {
           //   headerTitle: (props) => <Header {...props} />, headerBackTitle: false
           // })}
         />
-        <Stack.Screen name = "Portfolio List" component={PortfolioList} />
+        
         <Stack.Screen 
-          name = "Portfolio 1 Builder" 
+          name = "Portfolio Builder" 
           component={Portfolio1Builder} //onPress={printToFile}
           options={({ navigation }) => ({
             headerRight: () => (
@@ -3200,7 +3223,10 @@ const selectPrinter = async () => {
         <Stack.Screen name = "Additional Information" component={AdditionalInfo}/>
         <Stack.Screen name = "Honors Classes" component={HC}/>
         <Stack.Screen name = "Honors Classes Info" component={HCInfo}/>
-        <Stack.Screen name = "Portfolio Viewer" component={PortfolioViewer}/>
+        <Stack.Screen name = "Portfolio Viewer"
+                      component={PortfolioViewer}
+                      
+                       />
 
       </Stack.Navigator>
     </NavigationContainer>
@@ -3439,6 +3465,41 @@ formikInput: {
   fontSize: 18,
   borderRadius: 6,
 },
+pViewerContainer: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#f0f0f0',
+  },
+pViewerSectionTitle: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    marginBottom: 10,
+    color: '#333',
+  },
+pViewerCardContainer: {
+    marginVertical: 10,
+  },
+pViewerSectionContainer: {
+  marginBottom: 20,
+},
+pViewerCard: {
+  borderRadius: 6,
+  elevation: 3,
+  backgroundColor: '#fff',
+  shadowOffset: {width: 1, height: 1},
+  shadowColor: '#333',
+  shadowOpacity: 0.3,
+  shadowRadius: 2,
+  marginHorizontal: 4,
+  marginVertical: 6,
+  paddingLeft: 10,
+  paddingRight: 10,
+  },
+pViewerCardText: {
+    fontSize: 16,
+    marginVertical: 5,
+    color: '#555',
+  },
    
 
 });

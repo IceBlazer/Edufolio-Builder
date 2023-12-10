@@ -19,6 +19,7 @@ A list of all dependencies we installed. If needed, run these commands in your t
 - [Expo Print](https://docs.expo.dev/versions/latest/sdk/print/) `npx expo install expo-print`
 - [Expo Sharing](https://docs.expo.dev/versions/latest/sdk/sharing/) `npx expo install expo-sharing`
 - [Expo Status Bar](https://docs.expo.dev/versions/latest/sdk/status-bar/) `npx expo install expo-status-bar`
+- [Expo Vector Icons](https://www.npmjs.com/package/@expo/vector-icons/v/6.3.1) `npm i @expo/vector-icons@6.3.1`
 - [Formik](https://formik.org/docs/overview) `npm install formik --save`
 - [React Native Elements](https://reactnativeelements.com/docs) `npm install react-native-elements`
 - [React Native FS](https://github.com/itinance/react-native-fs) `npm install react-native-fs --save`

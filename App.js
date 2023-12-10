@@ -387,7 +387,7 @@ function PersonalInfoForm({addPersonalInfo}, {personalInfo}) //actual form that 
 }
  
 /* 
-All functions from this point follow the same logic until the last section "Additional Information".
+All functions from this point follow the same logic and structure until the last section "Additional Information".
 First function is named according to its section is responsible for displaying all instances of data. E.g. all sports played by the user.
 Second function is the actual form displayed in the modal, which the user will prompt to open with the plus button in the first function's screen to add more information.
 Third function is a detailed info screen that will open if the user presses on one of their overview cards in the first function's screen.

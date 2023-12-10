@@ -37,8 +37,8 @@ const reducer = (state, action) => {
         return { ...state, acs: action.payload };
     case 'SET_SAS':
         return { ...state, sas: action.payload };
-    case 'SET_MA':
-        return { ...state, ma: action.payload };
+    case 'SET_MAS':
+        return { ...state, mas: action.payload };
     case 'SET_LEADERSHIPS':
         return { ...state, leaderships: action.payload };
     case 'SET_HCS':

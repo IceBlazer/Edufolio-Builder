@@ -24,11 +24,11 @@ import RenderHtml from 'react-native-render-html';
 import AddSection from './components/addSection'
 import SectionItem from './components/sectionItem'
 import Sandbox from './components/sandbox'
-import Header from './shared/header';
+import Header from './shared/header'; //custom component for Header
 import AppLoading from "expo-app-loading";
 
 
-function Card(props)
+function Card(props) //custom component for Card
 {
     return(
         <View style={styles.card}>
@@ -137,9 +137,8 @@ function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the
   
 
   return (
-    <TouchableWithoutFeedback onPress={() => {
+    <TouchableWithoutFeedback onPress={() => {  //these 3 lines are dispersed throughout the code. They are meant to dismiss the keyboard upon tapping on the screen
       Keyboard.dismiss();
-      //console.log('keyboard dismissed');
     }}>
     
     <View style={styles.portfolioBuilderContainer}>
@@ -152,7 +151,7 @@ function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the
       <Text style = {{textAlign: 'center'}}>Press the check mark in the top right once you are done.</Text>
       <View style = {styles.content}>
         <View style = {styles.list}>
-          <FlatList 
+          <FlatList //renders the title of each section in a card component with icons predefined in iconMappings, and also will go to their respective screen upon press
             data={sections}
             renderItem={({item}) => (
               <TouchableOpacity onPress={() => navigation.navigate(item.name)}>
@@ -196,7 +195,7 @@ function PersonalInfo({navigation}) //Personal Info Screen
     loadPersonalInfo(); 
   }, []); 
 
-  const loadPersonalInfo = async () => {
+  const loadPersonalInfo = async () => { //implementing AsyncStorage to save and load all data entered by the user
     console.log("load personalInfo called");
     try {
       const storedPersonalInfo = await AsyncStorage.getItem("storedPersonalInfo");
@@ -234,16 +233,15 @@ function PersonalInfo({navigation}) //Personal Info Screen
   };
 
   return(
-  //  <Sandbox />
     <TouchableWithoutFeedback onPress={() => {
       Keyboard.dismiss();
       console.log('keyboard dismissed');
     }}>
     <View>
       
-        <FlatList data = {personalInfo} renderItem = {({item}) => (
+        <FlatList data = {personalInfo} renderItem = {({item}) => ( //renders the personalInfo overview card, can be pressed to see more details
           <Card>
-            <TouchableOpacity onPress={()=>Alert.alert(
+            <TouchableOpacity onPress={()=>Alert.alert( //alert to delete the card and its corresponding data permanently
               'Are you sure you want to delete this?',
               'You cannot undo this action.',
               [
@@ -267,7 +265,7 @@ function PersonalInfo({navigation}) //Personal Info Screen
             </TouchableOpacity>
           </Card>
         )}/>
-      {personalInfo.length === 0 && (
+      {personalInfo.length === 0 && ( //if user has already entered their personalInformation, modal will not toggle, otherwise it will pop up (check only happens for personalInfo section)
           <TouchableOpacity
             style={{alignItems: 'center'}}
             onPress={() => setModalOpen(true)}
@@ -286,7 +284,8 @@ function PersonalInfo({navigation}) //Personal Info Screen
                   style={{ ...styles.modalToggle, ...styles.modalClose }}
                   onPress={() => setModalOpen(false)}
                 />
-                <PersonalInfoForm addPersonalInfo={addPersonalInfo}/>
+                <PersonalInfoForm addPersonalInfo={addPersonalInfo}/> 
+                {/* imported Form Component using Formik, all values submitted will be saved to personalInfo data */}
                </View>
             </TouchableWithoutFeedback>
           </ScrollView>
@@ -305,7 +304,7 @@ function PersonalInfo({navigation}) //Personal Info Screen
   )
 }
 
-function PersonalInfoForm({addPersonalInfo}, {personalInfo})
+function PersonalInfoForm({addPersonalInfo}, {personalInfo}) //actual form that users will input answers validated by Yup
 {
   const personalSchema = yup.object({
     firstName: yup.string().required('This field is required.').min(2, 'Must be at least 2 characters'),
@@ -337,7 +336,8 @@ function PersonalInfoForm({addPersonalInfo}, {personalInfo})
               value={props.values.firstName}
               onBlur={props.handleBlur('firstName')}
             />
-            <Text style = {styles.errorText}>{props.touched.firstName && props.errors.firstName}</Text>
+            <Text style = {styles.errorText}>{props.touched.firstName && props.errors.firstName}</Text> 
+            {/* displays error messages if applicable */}
 
             <Text style = {{marginTop: 5}}>Last Name: </Text>
             <TextInput 
@@ -386,7 +386,14 @@ function PersonalInfoForm({addPersonalInfo}, {personalInfo})
   )
 }
  
+/* 
+All functions from this point follow the same logic until the last section "Additional Information".
+First function is named according to its section is responsible for displaying all instances of data. E.g. all sports played by the user.
+Second function is the actual form displayed in the modal, which the user will prompt to open with the plus button in the first function's screen to add more information.
+Third function is a detailed info screen that will open if the user presses on one of their overview cards in the first function's screen.
 
+
+*/
 
 
 function AthleticAchievements({ navigation }) {
@@ -1193,7 +1200,7 @@ function VolunteerServicesInfo({route, navigation})
   );
 }
 
-function EC({navigation})
+function EC({navigation}) //Extracurricular Activities
 {
   // const [ecs, setECS] = useState([
   //   {activity: 'Taekwondo', startDate: '2021/3/12', endDate: '2022/5/12', avgHrsPerWeek: '4', totalHrs: '234', gradesParticipated: '9, 10, 11', comments: "i'm bruce lee", key: '1'},
@@ -1581,7 +1588,7 @@ function AwardsCertificates({navigation})
 
 }
 
-function ACSForm({addAC})
+function ACSForm({addAC}) //Awards/Certificates form
 {
   const acsSchema = yup.object({
     awardName: yup.string().required('This field is required.').min(3, 'Must be at least 3 characters'),
@@ -1673,7 +1680,7 @@ function AwardsCertificatesInfo({route, navigation})
   );
 }
 
-function SA({navigation})
+function SA({navigation}) //Skills/Achievements
 {
   const [sas, setSAS] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -1870,7 +1877,7 @@ function SAInfo({route})
   );
 }
 
-function MA({navigation})
+function MA({navigation}) //Music/Artistic Achievements
 {
   const [mas, setMAS] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -2091,7 +2098,7 @@ function MAInfo({route})
   );
 }
 
-function Leadership({navigation})
+function Leadership({navigation}) //Leaderships
 {
   const [leaderships, setLeaderships] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -2280,7 +2287,7 @@ function LeadershipInfo({route})
   );
 }
 
-function HC({navigation})
+function HC({navigation}) //Honors Classes
 {
   const[hcs, setHCS] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -2492,7 +2499,7 @@ function HCInfo({route})
   );
 }
 
-function AdditionalInfo({navigation})
+function AdditionalInfo({navigation}) // Additional Information
 {
   const [aI, setAI] = useState([]);
   const [modalOpen, setModalOpen] = useState(true);
@@ -2538,7 +2545,6 @@ function AdditionalInfo({navigation})
   };
 
   return(
-    //  <Sandbox />
       <TouchableWithoutFeedback onPress={() => {
         Keyboard.dismiss();
         console.log('keyboard dismissed');
@@ -2635,9 +2641,9 @@ function AIForm({addAI})
   )
 }
 
-function PortfolioViewer()
+function PortfolioViewer() // This screen is where user can see a collection of all the information they inputted as a list of all their notable achievements. 
 {
-  const source = {
+  const source = { //display portfolio as a HTML file
     html: `
   <p style='text-align:center;'>
     Hello World!
@@ -2684,7 +2690,7 @@ function PortfolioViewer()
     comments: 'Comments',
   };
 
-  const { state, dispatch } = useAppContext();
+  const { state, dispatch } = useAppContext(); // global state system using React Context and Reducer (Refer to AppContext.js for more information on how it is implemented)
   const { personalInfo,
         sports,
         educations,
@@ -2711,7 +2717,7 @@ function PortfolioViewer()
   const [hcsData, setHCSData] = useState([]);
   const [aiData, setAIData] = useState([]);
   
-  const fetchData = async () => {
+  const fetchData = async () => { //fetches data from all sections and pushes them into their respective sections in state
     try {
       const newSections = [];
       const storedPersonalInfo = await AsyncStorage.getItem("storedPersonalInfo");
@@ -2899,7 +2905,7 @@ function PortfolioViewer()
 
          {item.comments && <Text>Comments: {item.comments}</Text>}
           
-          {/* Add styling or other components as needed */}
+          
           </Card>
         </View>
       );
@@ -3082,10 +3088,10 @@ function PortfolioViewer()
   );
 }
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator(); //App runs on stack navigation
 
 
-export default function App({navigation}) {
+export default function App({navigation}) { //main App function
   
   const html = `
   
@@ -3129,9 +3135,11 @@ const selectPrinter = async () => {
 
     
   return (
-    <AppProvider>
+    <AppProvider> 
+    {/* AppProvider lets use React Context and Reducer by wrapping it across all screens. */}
     <NavigationContainer>
-      <Stack.Navigator >
+      <Stack.Navigator > 
+      {/* all the different screens  */}
         <Stack.Screen 
           name = "Home" 
           component={HomeScreen}
@@ -3230,7 +3238,7 @@ const selectPrinter = async () => {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ //all styles for components seen throughout the App
   container: {
     flex: 1,
     padding: 20,

@@ -10,7 +10,7 @@ To start, you will need to install the Expo Go Application on your iPhone of iOS
 
 Follow the [Expo Go](https://docs.expo.dev/get-started/expo-go/) documentation guide to get started and receive additional help. 
 
-#### Documentation and Dependencies Required
+#### Documentation and External Dependencies Required
 A list of all dependencies we installed. If needed, run these commands in your terminal:
 - [Asynchronous Storage](https://react-native-async-storage.github.io/async-storage/docs/install/) `npx expo install @react-native-async-storage/async-storage`
 - [React Native Navigation](https://reactnavigation.org/docs/getting-started/) `npx expo install react-native-screens react-native-safe-area-context`
@@ -18,24 +18,17 @@ A list of all dependencies we installed. If needed, run these commands in your t
 - [Expo Splash Screen](https://docs.expo.dev/versions/latest/sdk/splash-screen/#usage) `npx expo install expo-splash-screen`
 - [Expo Print](https://docs.expo.dev/versions/latest/sdk/print/) `npx expo install expo-print`
 - [Expo Sharing](https://docs.expo.dev/versions/latest/sdk/sharing/) `npx expo install expo-sharing`
-- [Expo Status Bar](https://docs.expo.dev/versions/latest/sdk/status-bar/) `npx expo install expo-status-bar`
 - [Expo Vector Icons](https://www.npmjs.com/package/@expo/vector-icons/v/6.3.1) `npm i @expo/vector-icons@6.3.1`
 - [Formik](https://formik.org/docs/overview) `npm install formik --save`
 - [React Native Elements](https://reactnativeelements.com/docs) `npm install react-native-elements`
-- [React Native FS](https://github.com/itinance/react-native-fs) `npm install react-native-fs --save`
-- [React Native Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/docs/fundamentals/installation) `expo install react-native-gesture-handler`
-- [React Native HTML-to-PDF](https://www.npmjs.com/package/react-native-html-to-pdf) `npm install react-native-html-to-pdf --save`
 - [React Native Keyboard Aware ScrollView](https://www.npmjs.com/package/react-native-keyboard-aware-scroll-view) `npm i react-native-keyboard-aware-scroll-view --save`
-- [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/) `npx expo install react-native-reanimated`
-- [React Native Remote SVG](https://www.npmjs.com/package/react-native-remote-svg) `npm i react-native-remote-svg`
-- [React Native Render HTML](https://www.npmjs.com/package/react-native-render-html) `npm i react-native-render-html`
 - [React Native Safe Area Context](https://docs.expo.dev/versions/latest/sdk/safe-area-context/) `npx expo install react-native-safe-area-context`
 - [React Native Screens](https://github.com/software-mansion/react-native-screens) `npx expo install react-native-screens`
 - [React Native Share](https://github.com/react-native-share/react-native-share) `npm i react-native-share --save`
 - [Yup Validation](https://www.npmjs.com/package/yup) `npm i yup`
 
 ### Running the Project
-Once you have cloned our repository, you can open up the files with a code editor of your choice. To start a development server, you will need to first run the command in the terminal: `cd PROJECTNAME`. Replace PROJECTNAME with the name of the folder that contains all of our project files. This ensures you are in the directory of our project if not already. Next, run the command: `npx expo start` to run the development server. This will print out a QR code in the terminal which you will need to scan using the camera. This will open up the Expo Go app and run the application directly on your phone! It also prints out a list of other commands you can type into the terminal in case you need more help or information. To stop running the server, press `CTRL+C` in the terminal to quit the process and end the server.
+Once you have cloned our repository, you can open up the files with a code editor of your choice. To start a development server, you will need to first run the command in the terminal: `cd PROJECTNAME`. Replace PROJECTNAME with the name of the folder that contains all of our project files. This ensures you are in the directory of our project if not already. Ensure that your phone and the computer/laptop are connected to the same WiFi network. Next, run the command: `npx expo start` to run the development server. This will print out a QR code in the terminal which you will need to scan using the camera. This will open up the Expo Go app and run the application directly on your phone! It also prints out a list of other commands you can type into the terminal in case you need more help or information. To stop running the server, press `CTRL+C` in the terminal to quit the process and end the server.
 
 Follow the [Expo Go](https://docs.expo.dev/get-started/create-a-project/) documentation guide to run the project. **(You are not creating a new project)**. You pretty much only need to follow steps 2-3.
 

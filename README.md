@@ -6,7 +6,7 @@ A React Native mobile application built for iOS for the 2023-24 FBLA Mobile Appl
 
 ### Prerequisites
 
-To start, you will need to install the Expo Go Application on your iPhone of iOS 13 or later. You will also need the latest recommended release of [Node.js LTS](https://nodejs.org/en/) as well as [Git](https://git-scm.com/) for source control to clone our Github repository into a code editor of your choice (We recommend Visual Studio Code). You will also need to create an Expo account to use the Expo Go Application.
+To start, you will need to install the Expo Go Application on your iPhone of iOS 13 or later. You will also need the latest recommended release of [Node.js LTS](https://nodejs.org/en/) as well as [Git](https://git-scm.com/) for source control to clone our Github repository into a code editor of your choice (We recommend Visual Studio Code). You can also just press the "Open with Visual Studio" option. You will also need to create an Expo account to use the Expo Go Application.
 
 Follow the [Expo Go](https://docs.expo.dev/get-started/expo-go/) documentation guide to get started and receive additional help. 
 

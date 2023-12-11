@@ -34,7 +34,7 @@ Once you have cloned our repository, you can open up the files with a code edito
 Follow the [Expo Go](https://docs.expo.dev/get-started/create-a-project/) documentation guide to run the project. **(You are not creating a new project)**. You pretty much only need to follow steps 2-3.
 
 ## Credits
-- Team Members: Hemant C, Prabhath K, Aryan P
+- Team Members: Hemant C (IceBlazer), Prabhath K, Aryan P
 - Big thank you to [Net Ninja](https://www.youtube.com/@NetNinja) for helping us learn React Native!
 		- [React Native Beginner Playlist](https://www.youtube.com/watch?v=ur6I5m2nTvk&list=PL4cUxeGkcC9ixPU-QkScoRBVxtPPzVjrQ)
 - [Expo Vector Icons](https://icons.expo.fyi/Index)

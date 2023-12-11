@@ -3,6 +3,15 @@
 //To stop server do: CTRL+C
 //To close an existing server do: "netstat -ano | findstr :<PORT NUMBER BEING TAKEN>" and then do: "taskkill /PID <GIVEN LISTENING PID> /F"
 
+
+/* Side Note:
+Since we are using Expo Go, we are not able to display an app icon as that would require us to pay money to become an Apple Developer and have our own standalone app.
+To compensate for this, we still created our own app icon "appicon.png" in the assets folder. We also linked the image to the icon and splash screen as seen in app.json
+You can see it on lines 7 and 9-10.
+Therefore, if were to do an EAS Build and push our project into development officially as Apple Developers, we would have our own app icon displayed.
+You can also see this app icon as part of the loading splash screen when you first load the app and also in the home screen to integrate it into our app graphics.
+*/
+
 import React, {useState, useEffect} from 'react';
 import { Alert, Modal, TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -14,8 +23,8 @@ import * as yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { printToFileAsync} from 'expo-print';
 import * as Share from 'expo-sharing';
-import { AppProvider, useAppContext } from './AppContext';
 
+import { AppProvider, useAppContext } from './AppContext'; //see AppContext.js
 import Header from './Customcomponents/header'; //custom component for Header
 
 
@@ -263,7 +272,7 @@ function PersonalInfo({navigation}) //Personal Info Screen
   )
 }
 
-function PersonalInfoForm({addPersonalInfo}, {personalInfo}) //actual form that users will input answers validated by Yup
+function PersonalInfoForm({addPersonalInfo}) //actual form that users will input answers validated by Yup
 {
   const personalSchema = yup.object({
     firstName: yup.string().required('This field is required.').min(2, 'Must be at least 2 characters'),
@@ -478,7 +487,7 @@ function AthleticAchievements({ navigation }) {
 
 
 
-function SportsForm({addSport}, {sports})
+function SportsForm({addSport})
 {
   const sportsSchema = yup.object({
     sportName: yup.string().required('This field is required.').min(3, 'Must be at least 3 characters'),
@@ -2631,17 +2640,17 @@ function PortfolioViewer() // This screen is where user can see a collection of 
 
       if (storedPersonalInfo !== null) {
         const personalInfoData = JSON.parse(storedPersonalInfo);
-       // setPersonalInfoData(personalInfoData);
+       
        if(personalInfoData.length > 0)
        {
         newSections.push({ title: 'Personal Info:', data: personalInfoData });
-        dispatch({ type: 'SET_PERSONALINFO', payload: personalInfoData });
+        dispatch({ type: 'SET_PERSONALINFO', payload: personalInfoData }); // Updates the global state with fetched data
        }
        
       }
       if (storedSports !== null) {
         const sportsData = JSON.parse(storedSports);
-      //  setSportsData(sportsData);
+      
       if(sportsData.length > 0)
       {
         newSections.push({ title: 'Athletic Achievements:', data: sportsData });
@@ -2651,7 +2660,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
       }
       if (storedEducations !== null) {
         const educationsData = JSON.parse(storedEducations);
-       // setEducationsData(educationsData);
+       
        if(educationsData.length > 0)
        {
         newSections.push({ title: 'Education:', data: educationsData });
@@ -2662,7 +2671,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
       }
       if (storedVolunteerServices !== null) {
         const volunteerServicesData = JSON.parse(storedVolunteerServices);
-       //setVolunteerServicesData(volunteerServicesData);
+       
        if(volunteerServicesData.length > 0)
        {
         newSections.push({ title: 'Volunteer Services:', data: volunteerServicesData });
@@ -2672,7 +2681,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
       }
       if (storedECS !== null) {
         const ecsData = JSON.parse(storedECS);
-        //setECSData(ecsData);
+        
         if(ecsData.length > 0)
        {
         newSections.push({ title: 'Extracurricular Activities:', data: ecsData });
@@ -2682,7 +2691,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
       }
       if (storedACS !== null) {
         const acsData = JSON.parse(storedACS);
-       //setACSData(acsData);
+      
        if(acsData.length > 0)
        {
         newSections.push({ title: 'Awards/Certificates:', data: acsData });
@@ -2692,7 +2701,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
       }
       if (storedSAS !== null) {
         const sasData = JSON.parse(storedSAS);
-      // setSASData(sasData);
+     
         if(sasData.length > 0)
         {
           newSections.push({ title: 'Skills/Academic Achievements:', data: sasData });
@@ -2702,7 +2711,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
       }
       if (storedMAS !== null) {
         const masData = JSON.parse(storedMAS);
-      // setMASDATA(masData);
+   
         if(masData.length > 0)
         {
           newSections.push({ title: 'Music/Artistic Achievements:', data: masData });
@@ -2712,7 +2721,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
       }
       if (storedLeaderships !== null) {
         const leadershipsData = JSON.parse(storedLeaderships);
-        //setLeadershipsData(leadershipsData);
+       
         if(leadershipsData.length > 0)
         {
           newSections.push({ title: 'Leaderships:', data: leadershipsData });
@@ -2722,10 +2731,9 @@ function PortfolioViewer() // This screen is where user can see a collection of 
       }
       if (storedHCS !== null) {
         const hcsData = JSON.parse(storedHCS);
-        //setHCSData(hcsData);
+      
         if(hcsData.length > 0) {
-          newSections.push({ title: 'Honors Classes:', data: hcsData });
-        // Update the global state or perform any other actions with the fetched HCS data
+          newSections.push({ title: 'Honors Classes:', data: hcsData }); 
         dispatch({ type: 'SET_HCS', payload: hcsData });
         }
         
@@ -2733,10 +2741,9 @@ function PortfolioViewer() // This screen is where user can see a collection of 
 
       if (storedAI !== null) {
         const aiData = JSON.parse(storedAI);
-       // setAIData(aiData);
+ 
        if(aiData.length > 0) {
         newSections.push({ title: 'Additional Information:', data: aiData });
-        // Update the global state or perform any other actions with the fetched AI data
         dispatch({ type: 'SET_AI', payload: aiData });
        }
         
@@ -2972,7 +2979,6 @@ const styles = StyleSheet.create({ //all styles for components seen throughout t
 
   portfolioButtonText: {
     flex: 1,
-    //paddingLeft: 70,
     textAlign: 'left',
     fontSize: 30,
     

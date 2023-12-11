@@ -11,7 +11,7 @@ To start, you will need to install the Expo Go Application on your iPhone of iOS
 Follow the [Expo Go](https://docs.expo.dev/get-started/expo-go/) documentation guide to get started and receive additional help. 
 
 #### Documentation and External Dependencies Required
-A list of all dependencies we installed. If needed, run these commands in your terminal:
+A list of all dependencies we used. If needed, run these commands in your terminal:
 - [Asynchronous Storage](https://react-native-async-storage.github.io/async-storage/docs/install/) `npx expo install @react-native-async-storage/async-storage`
 - [React Native Context & Reducer](https://react.dev/learn/managing-state) No installation required.
 - [React Native Navigation](https://reactnavigation.org/docs/getting-started/) `npx expo install react-native-screens react-native-safe-area-context`

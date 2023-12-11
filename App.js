@@ -4,31 +4,20 @@
 //To close an existing server do: "netstat -ano | findstr :<PORT NUMBER BEING TAKEN>" and then do: "taskkill /PID <GIVEN LISTENING PID> /F"
 
 import React, {useState, useEffect} from 'react';
-
-// import {StatusBar} from 'expo-status-bar'
-import { Linking, Platform, ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Dimensions, TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity, useWindowDimensions} from 'react-native';
+import { Alert, Modal, TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {FontAwesome, Entypo, EvilIcons, Ionicons, MaterialIcons, AntDesign, Feather} from '@expo/vector-icons';
+import {FontAwesome, Ionicons, MaterialIcons, AntDesign, Feather} from '@expo/vector-icons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { printToFileAsync} from 'expo-print';
 import * as Share from 'expo-sharing';
-import * as Print from 'expo-print';
 import { AppProvider, useAppContext } from './AppContext';
-import * as FileSystem from 'expo-file-system';
-import ViewShot from 'react-native-view-shot';
-import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import HTML from 'react-native-render-html';
-import RenderHtml from 'react-native-render-html';
 
-import AddSection from './components/addSection'
-import SectionItem from './components/sectionItem'
-import Sandbox from './components/sandbox'
-import Header from './shared/header'; //custom component for Header
-import AppLoading from "expo-app-loading";
+import Header from './Customcomponents/header'; //custom component for Header
+
 
 
 function Card(props) //custom component for Card
@@ -400,15 +389,7 @@ function AthleticAchievements({ navigation }) {
     }
   };
 
-  const handleClearSports = async () => {
-    try {
-      await AsyncStorage.setItem("storedSports", JSON.stringify([]));
-      setSports([]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+  
 
   const removeSport = async (sport) => {
     try {
@@ -2760,7 +2741,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
        }
         
       }
-      //setSections(prevSections => [...prevSections, ...newSections]);
+      
       setSections(newSections);
     } catch (error) {
       console.log('Error fetching data:', error);
@@ -2773,28 +2754,6 @@ function PortfolioViewer() // This screen is where user can see a collection of 
       fetchData();
     }, []);
 
-
-
-    
-    const [selectedPrinter, setSelectedPrinter] = useState();
-    
-    const print = async () => {
-      await Print.printAsync({
-        html,
-        printerUrl: selectedPrinter?.url,
-      });
-    };
-    
-    const printToFile = async () => {
-      const {uri} = await Print.printToFileAsync({html});
-      console.log('File has been saved to:', uri);
-        await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
-    };
-    
-    const selectPrinter = async () => {
-      const printer = await Print.selectPrinterAsync(); // iOS only
-      setSelectedPrinter(printer);
-    };
 
     
     const generateHtmlContent = (sections) => {
@@ -2820,106 +2779,31 @@ function PortfolioViewer() // This screen is where user can see a collection of 
     
       return content.join('');
     };
+    
 
   const html = generateHtmlContent(sections);
    
-  // const generatePDF = async () => {
-  //   console.log('print pdf called');
-  //   const file = await printToFileAsync({
-  //     html: html,
-  //     base64: false
-  //   });
-  
-  //   await shareAsync(file.uri);
-  // }
-  
   const generatePDF = async () => {
-    try {
-      console.log('print pdf called');
-      const htmlContent = generateHtmlContent(sections);
-      
-      // Print to a temporary file
-      const file = await Print.printToFileAsync({
-        html: htmlContent,
-        base64: false,
-      });
-      console.log('Temporary file URI:', file.uri);
+    console.log('print pdf called');
+    const file = await printToFileAsync({
+      html: html,
+      base64: false
+    });
   
-      // // Ensure the file is saved
-      // await FileSystem.downloadAsync(file.uri, FileSystem.documentDirectory + 'portfolio.pdf');
+    await Share.shareAsync(file.uri);
+   };
   
-      // // Get the saved file URI
-      // const savedFileUri = FileSystem.documentDirectory + 'portfolio.pdf';
   
-      // Share the saved file
-      await Share.shareAsync(file.uri, {
-        mimeType: 'application/pdf',
-        dialogTitle: 'Share your portfolio',
-        UTI: 'com.adobe.pdf',
-      });
-    } catch (error) {
-      console.error('Error generating or sharing PDF:', error);
-    }
-  };
 
     const renderLabel = (key) => labelMappings[key] || key;
-    const renderItem = ({ item }) => {
-      // Render individual properties of each object
-      const properties = Object.entries(item).map(([key, value]) => (
-        <Text key={key}>
-          {key}: {value}
-        </Text>
-      ));
-       const { MAName, dateAwarded, SAName, activity, awardName, dateReceived, gradesReceived, positionTitle, organization, schoolName, location, beginningGrade, 
-        sportName, avgHrsPerWeek, totalHrs, gradesParticipated, firstName, lastName, address, phoneNum, email, className, startDate, endDate, comments } = item;
-      return (
-        <View>
-          <Card>
-          {/* Display properties of each object */}
-         {item.firstName && <Text>First Name: {item.firstName}</Text>}
-         {item.lastName  && <Text>Last Name: {item.lastName}</Text>}
-         {item.phoneNum  && <Text>Phone Number: {item.phoneNum}</Text>}
-         {item.email  && <Text>Email: {item.email}</Text>}
-         {item.organization  && <Text>Organization: {item.organization}</Text>}
-         {item.className && <Text>Class Name: {item.className}</Text>}
-          {item.MAName && <Text>Music/Artistic Achievement: {item.MAName}</Text>}
-         {item.SAName  && <Text>Skill/Academic Achievement: {item.SAName}</Text>}
-         {item.positionTitle  &&<Text>Position Title: {item.positionTitle}</Text>}
-         {item.activity  && <Text>Activity: {item.activity}</Text>}
-         {item.awardName  && <Text>Award Name: {item.awardName}</Text>}
-         {item.schoolName && <Text>School Name: {item.schoolName}</Text>}
-         {item.sportName  && <Text>Sport Name: {item.sportName}</Text>}
 
-         {item.organization && <Text>Organization: {item.organization}</Text>}
-         {item.location  && <Text>Location: {item.location}</Text>}
-
-         {item.beginningGrade && <Text>Beginning Grade: {item.beginningGrade}</Text>}
-
-         {item.dateReceived  && <Text>Date Received: {item.dateReceived}</Text>}
-         {item.dateAwarded  && <Text>Date Awarded: {item.dateAwarded}</Text>} 
-         {item.startDate && <Text>Start Date: {item.startDate}</Text>}
-         {item.endDate && <Text>End Date: {item.endDate}</Text>}
-
-          {item.avgHrsPerWeek && <Text>Average Hours per Week: {item.avgHrsPerWeek}</Text>}
-         {item.totalHrs  && <Text>Total Hours: {item.totalHrs}</Text>}
-
-         {item.gradesReceived  && <Text>Grades Received: {item.gradesReceived}</Text>}
-         {item.gradesParticipated && <Text>Grades Participated: {item.gradesParticipated}</Text>} 
-
-         {item.comments && <Text>Comments: {item.comments}</Text>}
-          
-          
-          </Card>
-        </View>
-      );
-    };
    
   return (
     
    
     <View  style={styles.pViewerContainer}>
       <ScrollView>
-    
+      <Text style = {{textAlign: 'center'}}>Press the export button to the right to export your portfolio as a PDF!</Text>
       <TouchableOpacity>
       <Feather name="share" size={50} color="black" onPress={generatePDF} style={{flex: 1, alignSelf: 'flex-end', borderRadius:5,borderWidth: 5,borderColor: "#ffff"}} />
       </TouchableOpacity>
@@ -2960,7 +2844,7 @@ export default function App({navigation}) { //main App function
     
   return (
     <AppProvider> 
-    {/* AppProvider lets use React Context and Reducer by wrapping it across all screens. */}
+    {/* AppProvider lets us use React Context and Reducer by wrapping it across all screens. */}
     <NavigationContainer>
       <Stack.Navigator > 
       {/* all the different screens  */}

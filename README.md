@@ -13,6 +13,7 @@ Follow the [Expo Go](https://docs.expo.dev/get-started/expo-go/) documentation g
 #### Documentation and External Dependencies Required
 A list of all dependencies we installed. If needed, run these commands in your terminal:
 - [Asynchronous Storage](https://react-native-async-storage.github.io/async-storage/docs/install/) `npx expo install @react-native-async-storage/async-storage`
+- [React Native Context & Reducer](https://react.dev/learn/managing-state) No installation required.
 - [React Native Navigation](https://reactnavigation.org/docs/getting-started/) `npx expo install react-native-screens react-native-safe-area-context`
 - [React Native Stack Navigation](https://reactnavigation.org/docs/native-stack-navigator/) `npm install @react-navigation/native-stack`
 - [Expo Splash Screen](https://docs.expo.dev/versions/latest/sdk/splash-screen/#usage) `npx expo install expo-splash-screen`

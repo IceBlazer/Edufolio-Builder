@@ -15,9 +15,10 @@ import {Formik} from 'formik';
 import * as yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { printToFileAsync} from 'expo-print';
-import { shareAsync} from 'expo-sharing';
+import * as Share from 'expo-sharing';
 import * as Print from 'expo-print';
 import { AppProvider, useAppContext } from './AppContext';
+import * as FileSystem from 'expo-file-system';
 import ViewShot from 'react-native-view-shot';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import HTML from 'react-native-render-html';
@@ -2822,17 +2823,44 @@ function PortfolioViewer() // This screen is where user can see a collection of 
 
   const html = generateHtmlContent(sections);
    
+  // const generatePDF = async () => {
+  //   console.log('print pdf called');
+  //   const file = await printToFileAsync({
+  //     html: html,
+  //     base64: false
+  //   });
+  
+  //   await shareAsync(file.uri);
+  // }
+  
   const generatePDF = async () => {
-    console.log('print pdf called');
-    const file = await printToFileAsync({
-      html: html,
-      base64: false
-    });
+    try {
+      console.log('print pdf called');
+      const htmlContent = generateHtmlContent(sections);
+      
+      // Print to a temporary file
+      const file = await Print.printToFileAsync({
+        html: htmlContent,
+        base64: false,
+      });
+      console.log('Temporary file URI:', file.uri);
   
-    await shareAsync(file.uri);
-  }
+      // // Ensure the file is saved
+      // await FileSystem.downloadAsync(file.uri, FileSystem.documentDirectory + 'portfolio.pdf');
   
-
+      // // Get the saved file URI
+      // const savedFileUri = FileSystem.documentDirectory + 'portfolio.pdf';
+  
+      // Share the saved file
+      await Share.shareAsync(file.uri, {
+        mimeType: 'application/pdf',
+        dialogTitle: 'Share your portfolio',
+        UTI: 'com.adobe.pdf',
+      });
+    } catch (error) {
+      console.error('Error generating or sharing PDF:', error);
+    }
+  };
 
     const renderLabel = (key) => labelMappings[key] || key;
     const renderItem = ({ item }) => {
@@ -2844,8 +2872,6 @@ function PortfolioViewer() // This screen is where user can see a collection of 
       ));
        const { MAName, dateAwarded, SAName, activity, awardName, dateReceived, gradesReceived, positionTitle, organization, schoolName, location, beginningGrade, 
         sportName, avgHrsPerWeek, totalHrs, gradesParticipated, firstName, lastName, address, phoneNum, email, className, startDate, endDate, comments } = item;
-  
-      // const { className, startDate, endDate, comments} = item;
       return (
         <View>
           <Card>
@@ -2930,44 +2956,6 @@ const Stack = createNativeStackNavigator(); //App runs on stack navigation
 
 export default function App({navigation}) { //main App function
   
-  const html = `
-  <html>
-    <body>
-      <h1>Hi buddy</h1>
-      <p style="color red;">Hello. Bonjour.</p>
-    </body
-  </html>
-`;
-
-const generatePDF = async () => {
-  console.log('print pdf called');
-  const file = await Print.printToFileAsync({
-    html: html,
-    base64: false
-  });
-
-  await shareAsync(file.uri);
-}
-
-const [selectedPrinter, setSelectedPrinter] = useState();
-
-const print = async () => {
-  await Print.printAsync({
-    html,
-    printerUrl: selectedPrinter?.url,
-  });
-};
-
-const printToFile = async () => {
-  const {uri} = await Print.printToFileAsync({html});
-  console.log('File has been saved to:', uri);
-    await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
-};
-
-const selectPrinter = async () => {
-  const printer = await Print.selectPrinterAsync(); // iOS only
-  setSelectedPrinter(printer);
-};
 
     
   return (
@@ -2985,7 +2973,7 @@ const selectPrinter = async () => {
         
         <Stack.Screen 
           name = "Portfolio Builder" 
-          component={Portfolio1Builder} //onPress={printToFile}
+          component={Portfolio1Builder}
           options={({ navigation }) => ({
             headerRight: () => (
               <TouchableOpacity>

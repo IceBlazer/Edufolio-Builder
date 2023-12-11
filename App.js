@@ -1106,7 +1106,7 @@ function VolunteerServicesForm({addVolunteerServices})
     </View>
   )
 }
-function VolunteerServicesInfo({route, navigation})
+function VolunteerServicesInfo({route})
 {
   const {item} = route.params;
 
@@ -1137,17 +1137,7 @@ function VolunteerServicesInfo({route, navigation})
 
 function EC({navigation}) //Extracurricular Activities
 {
-  // const [ecs, setECS] = useState([
-  //   {activity: 'Taekwondo', startDate: '2021/3/12', endDate: '2022/5/12', avgHrsPerWeek: '4', totalHrs: '234', gradesParticipated: '9, 10, 11', comments: "i'm bruce lee", key: '1'},
-
-  // ])
-  // const addEC = (ec) => {
-  //   ec.key = Math.random().toString();
-  //   setECS((currentEC) => {
-  //     return [ec, ...currentEC]
-  //   });
-  //   setModalOpen(false);
-  // }
+  
 
   const [ecs, setECS] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -1370,7 +1360,7 @@ function ECSForm({addEC})
   )
 }
 
-function ECInfo({route, navigation})
+function ECInfo({route})
 {
   const {item} = route.params;
 
@@ -1734,7 +1724,7 @@ function SA({navigation}) //Skills/Achievements
   );
 }
 
-function SASForm({addSA}, {sas})
+function SASForm({addSA})
 {
   const sasSchema = yup.object({
     SAName: yup.string().required('This field is required.').min(3, 'Must be at least 3 characters'),
@@ -2434,10 +2424,10 @@ function HCInfo({route})
   );
 }
 
-function AdditionalInfo({navigation}) // Additional Information
+function AdditionalInfo() // Additional Information
 {
   const [aI, setAI] = useState([]);
-  const [modalOpen, setModalOpen] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
   useEffect(() => {
     loadAI(); 
   }, []); 
@@ -2509,6 +2499,14 @@ function AdditionalInfo({navigation}) // Additional Information
               </TouchableOpacity>
             </Card>
           )}/>
+          {aI.length === 0 && ( 
+          <TouchableOpacity
+            style={{alignItems: 'center'}}
+            onPress={() => setModalOpen(true)}
+          >
+            <Ionicons name="md-add-circle-outline" size={50} color="black" />
+          </TouchableOpacity>
+        )}      
           <Modal visible={modalOpen} animationType="slide">
             <ScrollView>
               <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -2578,36 +2576,6 @@ function AIForm({addAI})
 
 function PortfolioViewer() // This screen is where user can see a collection of all the information they inputted as a list of all their notable achievements. 
 {
-  // const viewShotRef = useRef(null);
-  // const handleSharePDF = async () => {
-  //   try {
-  //     // Capture the view
-  //     const imageURI = await viewShotRef.current.capture();
-
-  //     // Convert the image to PDF
-  //     const options = {
-  //       html: `<html><body><img src="${imageURI}" /></body></html>`,
-  //       fileName: 'portfolio',
-  //       directory: 'Documents',
-  //     };
-
-  //     const pdf = await RNHTMLtoPDF.convert(options);
-      
-  //     // Now you can share the generated PDF
-  //     // Use the appropriate share API for your use case (e.g., react-native-share)
-  //     // For simplicity, we'll just show an alert here
-  //     Alert.alert('PDF Generated', `PDF saved at: ${pdf.filePath}`);
-  //   } catch (error) {
-  //     console.error('Error generating PDF:', error);
-  //   }
-  // };
-  // const source = { //display portfolio as a HTML file
-  //   html: `
-  // <p style='text-align:center;'>
-  //   Hello World!
-  // </p>`
-  // };
-  const { width} = useWindowDimensions();
   const labelMappings = {
       
     firstName: 'First Name',
@@ -2662,18 +2630,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
         aI} = state;
     const [sections, setSections] = useState([]);
 
-   const newSections = [];
-  const [personalInfoData, setPersonalInfoData] = useState([]);
-  const [sportsData, setSportsData] = useState([]);
-  const[educationsData, setEducationsData] = useState([]);
-  const [volunteerServicesData, setVolunteerServicesData] = useState([]);
-  const [ecsData, setECSData] = useState([]);
-  const [acsData, setACSData] = useState([]);
-  const [sasData, setSASData] = useState([]);
-  const [masData, setMASDATA] = useState([]);
-  const [leadershipsData, setLeadershipsData] = useState([]);
-  const [hcsData, setHCSData] = useState([]);
-  const [aiData, setAIData] = useState([]);
+
   
   const fetchData = async () => { //fetches data from all sections and pushes them into their respective sections in state
     try {
@@ -2933,7 +2890,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
    
   return (
     
-    //  <RenderHtml contentWidth={width} source={source}/> 
+   
     <View  style={styles.pViewerContainer}>
       <ScrollView>
     
@@ -2962,150 +2919,6 @@ function PortfolioViewer() // This screen is where user can see a collection of 
     )
   ))}
 </ScrollView>
-    {/* {personalInfoData.length > 0 && (
-          <>
-          
-            <Text>Personal Info Data:</Text>
-            
-            <FlatList
-              data={personalInfoData}
-              renderItem={renderItem}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          
-          </>
-        )}
-        {sportsData.length > 0 && (
-          <>
-          
-            <Text>Sports Data:</Text>
-            
-            <FlatList
-              data={sportsData}
-              renderItem={renderItem}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          
-          </>
-        )}
-        
-       {educationsData.length > 0 && (
-          <>
-          
-            <Text>Education Data:</Text>
-            
-            <FlatList
-              data={educationsData}
-              renderItem={renderItem}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          
-          </>
-        )}
-        {volunteerServicesData.length > 0 && (
-          <>
-          
-            <Text>Volunteer Services Data:</Text>
-            
-            <FlatList
-              data={volunteerServicesData}
-              renderItem={renderItem}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          
-          </>
-        )}
-        {ecsData.length > 0 && (
-          <>
-          
-            <Text>ECS Data:</Text>
-            
-            <FlatList
-              data={ecsData}
-              renderItem={renderItem}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          
-          </>
-        )}
-        {acsData.length > 0 && (
-          <>
-          
-            <Text>ACS Data:</Text>
-            
-            <FlatList
-              data={acsData}
-              renderItem={renderItem}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          
-          </>
-        )}
-        {sasData.length > 0 && (
-          <>
-          
-            <Text>SAS Data:</Text>
-            
-            <FlatList
-              data={sasData}
-              renderItem={renderItem}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          
-          </>
-        )}
-        {masData.length > 0 && (
-          <>
-          
-            <Text>MAS Data:</Text>
-            
-            <FlatList
-              data={masData}
-              renderItem={renderItem}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          
-          </>
-        )}
-        {leadershipsData.length > 0 && (
-          <>
-          
-            <Text>Leadership Data:</Text>
-            
-            <FlatList
-              data={leadershipsData}
-              renderItem={renderItem}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          
-          </>
-        )}
-      {hcsData.length > 0 && (
-        <>
-          <Text>HCS Data:</Text>
-          
-          <FlatList
-            
-            data={hcsData}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        
-        </>
-      )}
-
-      {aiData.length > 0 && (
-        <>
-          <Text>AI Data:</Text>
-          <FlatList
-            data={aiData}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        </>
-      )} */}
-
-      {/* Other UI components */}
       
     </View>
     
@@ -3167,18 +2980,7 @@ const selectPrinter = async () => {
           name = "Home" 
           component={HomeScreen}
           options={{ headerTitle: (props) => <Header {...props} />, headerBackTitleVisible: false}}
-          // options={({props}) => ({
-          //   headerLeft: () => (
-              
-          //       <Image 
-          //         source={require('./assets/icon.png')}
-          //         style = {{paddingLeft: 5}}
-                  
-          //       />
-             
-          //   ),
-          //   headerTitle: (props) => <Header {...props} />, headerBackTitle: false
-          // })}
+          
         />
         
         <Stack.Screen 
@@ -3202,7 +3004,6 @@ const selectPrinter = async () => {
         <Stack.Screen 
           name = "Personal Info"
           component={PersonalInfo}
-          //options={{ headerTitle: (props) => <Header {...props} />, headerBackTitleVisible: false}}
            />
         <Stack.Screen name = "Athletic Achievements"  component={AthleticAchievements}/>
         <Stack.Screen name = "Sport Info" component={SportInfo}/>
@@ -3233,34 +3034,6 @@ const selectPrinter = async () => {
     </AppProvider>
     
     
-   /* <View style={styles.container}>
-      <Text>My name is {name} and my age is {age}.</Text>
-      <Text>User's name is {userInfo.firstName} {userInfo.lastName}.</Text>
-      <Text>Contact Info: {userInfo.email} {userInfo.phoneNum}</Text>
-      <Text>Address: {userInfo.address}</Text>
-      <Text>Enter name:</Text>
-
-      <TextInput 
-        multiline
-        style={styles.input}
-        placeholder='e.g. John Doe'
-        onChangeText={(val) => setName(val)}
-        />
-
-      <Text>Enter age:</Text>
-      <TextInput
-        keyboardType='numeric'
-        style = {styles.input}
-        placeholder = 'e.g. 23'
-        onChangeText = {(val) => setAge(val)}
-        />
-
-
-      <View style={styles.buttonContainer}>
-        <Button title='Back' onPress={pressHandler}/> 
-      </View>
-
-    </View> */
   );
 }
 
@@ -3268,7 +3041,6 @@ const styles = StyleSheet.create({ //all styles for components seen throughout t
   container: {
     flex: 1,
     padding: 20,
-    //backgroundColor: 'dodgerblue',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -3337,20 +3109,7 @@ const styles = StyleSheet.create({ //all styles for components seen throughout t
   plus: {
    alignSelf: 'center',
   },
-  list: {
-   // marginTop: 20,
 
-  },
-
- /* item: {
-    marginTop: 24,
-    padding: 30,
-    backgroundColor: '#FFF5F3',
-    fontSize: 24,
-    borderWidth: 3,
-    borderColor: '#6D6D6D',
-
-  }, */
 
   buttonContainer: {
     marginTop: 20,
@@ -3418,13 +3177,11 @@ rightIcon: {
   flexDirection: 'row-reverse',
   justifyContent: 'space-between',
   alignItems: 'center',
-  //padding: 3,
 },
 
 sectionInfoCard: {
   flex: 1,
   textAlign: 'left',
-  //flexDirection: 'row',
   fontSize: 30,
   padding: 6,
   
@@ -3438,7 +3195,6 @@ portfolioBuilderCard: {
 infoSubtitle: {
   flex: 1,
   textAlign: 'left',
-  //flexDirection: 'row',
   fontSize: 18,
   padding: 6,
 },

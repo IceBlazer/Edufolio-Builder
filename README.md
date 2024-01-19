@@ -6,13 +6,14 @@ A React Native mobile application built for iOS for the 2023-24 FBLA Mobile Appl
 
 ### Prerequisites
 
-To start, you will need to install the Expo Go Application on your iPhone of iOS 13 or later. You will also need the latest recommended release of [Node.js LTS](https://nodejs.org/en/) as well as [Git](https://git-scm.com/) for source control to clone our Github repository into a code editor of your choice (We recommend Visual Studio Code). You will also need to create an Expo account to use the Expo Go Application.
+To start, you will need to install the Expo Go Application on your iPhone of iOS 13 or later. You will also need the latest recommended release of [Node.js LTS](https://nodejs.org/en/) as well as [Git](https://git-scm.com/) for source control to clone our Github repository into a code editor of your choice (We recommend Visual Studio Code). You can also just press the "Open with Visual Studio" option. You can also download it as a ZIP file and extract it. You can open that extracted folder using Visual Studio Code. You will also need to [create an Expo account](https://expo.dev/) to use the Expo Go Application. This app is intended to run on iPhones and has not been scaled to accomodate tablet and iPad sizes yet.
 
 Follow the [Expo Go](https://docs.expo.dev/get-started/expo-go/) documentation guide to get started and receive additional help. 
 
 #### Documentation and External Dependencies Required
-A list of all dependencies we installed. If needed, run these commands in your terminal:
+A list of all dependencies we used. If needed, run these commands in your terminal:
 - [Asynchronous Storage](https://react-native-async-storage.github.io/async-storage/docs/install/) `npx expo install @react-native-async-storage/async-storage`
+- [React Native Context & Reducer](https://react.dev/learn/managing-state) No installation required.
 - [React Native Navigation](https://reactnavigation.org/docs/getting-started/) `npx expo install react-native-screens react-native-safe-area-context`
 - [React Native Stack Navigation](https://reactnavigation.org/docs/native-stack-navigator/) `npm install @react-navigation/native-stack`
 - [Expo Splash Screen](https://docs.expo.dev/versions/latest/sdk/splash-screen/#usage) `npx expo install expo-splash-screen`
@@ -33,7 +34,8 @@ Once you have cloned our repository, you can open up the files with a code edito
 Follow the [Expo Go](https://docs.expo.dev/get-started/create-a-project/) documentation guide to run the project. **(You are not creating a new project)**. You pretty much only need to follow steps 2-3.
 
 ## Credits
-- Team Members: Hemant C, Prabhath K, Aryan P
+- Team Members: Hemant C (IceBlazer), Prabhath K, Aryan P
 - Big thank you to [Net Ninja](https://www.youtube.com/@NetNinja) for helping us learn React Native!
 		- [React Native Beginner Playlist](https://www.youtube.com/watch?v=ur6I5m2nTvk&list=PL4cUxeGkcC9ixPU-QkScoRBVxtPPzVjrQ)
+- [Expo Vector Icons](https://icons.expo.fyi/Index)
 

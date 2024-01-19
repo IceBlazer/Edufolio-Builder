@@ -108,7 +108,7 @@ function Portfolio1Builder({navigation}) //Portfolio Builder Screen with all the
   
 
   return (
-    <TouchableWithoutFeedback onPress={() => {  //these 3 lines are dispersed throughout the code. They are meant to dismiss the keyboard upon tapping on the screen
+    <TouchableWithoutFeedback onPress={() => {  //these 2 lines are dispersed throughout the code. They are meant to dismiss the keyboard upon tapping on the screen
       Keyboard.dismiss();
     }}>
     
@@ -176,7 +176,7 @@ function PersonalInfo({navigation}) //Personal Info Screen
       alert('Failed to fetch the input from storage: ' + e);
     }
   };
-  const addPersonalInfo = async (personal) => {
+  const addPersonalInfo = async (personal) => { //function to add personalInfo data to the personalInfo array
     personal.key = Math.random().toString();
     const newPersonalInfo = [...personalInfo, personal];
 
@@ -189,7 +189,7 @@ function PersonalInfo({navigation}) //Personal Info Screen
       console.log(error);
     }
   };
-  const removePersonalInfo = async (personal) => {
+  const removePersonalInfo = async (personal) => { // function to remove personalInfo data from the personalInfo array
     try {
       const newPersonalInfo = personalInfo.filter(item => item !== personal);
 
@@ -286,7 +286,9 @@ function PersonalInfoForm({addPersonalInfo}) //actual form that users will input
   return (
     <View>
       <Formik
+      //initialValues are the default values that will users will be populated upon submission in the form
         initialValues={{ firstName: '', lastName: '', address: '', phoneNum: '', email: ''}}
+      //validationSchema is the schema that will validate the user's input (line 277)
         validationSchema={personalSchema}
         onSubmit={(values) => {
           console.log(values);
@@ -296,7 +298,8 @@ function PersonalInfoForm({addPersonalInfo}) //actual form that users will input
       >
       {(props) => (
           <KeyboardAwareScrollView>
-            <Text style = {{marginTop: 5}}>First Name: </Text>
+            <Text style = {{marginTop: 5}}>First Name: </Text> 
+            {/* text field for firstName */}
             <TextInput 
               style={styles.formikInput}
               placeholder='First Name: '
@@ -356,15 +359,16 @@ function PersonalInfoForm({addPersonalInfo}) //actual form that users will input
  
 /* 
 All functions from this point follow the same logic and structure until the last section "Additional Information".
-First function is named according to its section is responsible for displaying all instances of data. E.g. all sports played by the user.
-Second function is the actual form displayed in the modal, which the user will prompt to open with the plus button in the first function's screen to add more information.
-Third function is a detailed info screen that will open if the user presses on one of their overview cards in the first function's screen.
+Each category is grouped into 3 functions.
+First function is named according to its section and is responsible for displaying all instances of data. E.g. all sports played by the user.
+Second function is the actual form displayed in the modal, which the user will prompt to open with the plus button in the first function's screen to add their information.
+Third function is a detailed info screen that will open if the user presses on one of their overview cards that will be created upon submission and displayed in the first function's screen.
 
 
 */
 
 
-function AthleticAchievements({ navigation }) {
+function AthleticAchievements({ navigation }) { //function 1
   const [sports, setSports] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -487,7 +491,7 @@ function AthleticAchievements({ navigation }) {
 
 
 
-function SportsForm({addSport})
+function SportsForm({addSport}) //function 2
 {
   const sportsSchema = yup.object({
     sportName: yup.string().required('This field is required.').min(3, 'Must be at least 3 characters'),
@@ -591,7 +595,7 @@ function SportsForm({addSport})
   )
 }
 
-function SportInfo({route,navigation})
+function SportInfo({route,navigation}) //function 3
 {
   const {item} = route.params;
   
@@ -2922,6 +2926,7 @@ const styles = StyleSheet.create({ //all styles for components seen throughout t
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
+   // backgroundColor: 'skyblue',
   },
 
   portfolioBuilderContainer: {

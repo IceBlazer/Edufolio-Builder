@@ -4,13 +4,6 @@
 //To close an existing server do: "netstat -ano | findstr :<PORT NUMBER BEING TAKEN>" and then do: "taskkill /PID <GIVEN LISTENING PID> /F"
 
 
-/* Side Note:
-Since we are using Expo Go, we are not able to display an app icon as that would require us to pay money to become an Apple Developer and have our own standalone app.
-To compensate for this, we still created our own app icon "appicon.png" in the assets folder. We also linked the image to the icon and splash screen as seen in app.json
-You can see it on lines 7 and 9-10.
-Therefore, if were to do an EAS Build and push our project into development officially as Apple Developers, we would have our own app icon displayed.
-You can also see this app icon as part of the loading splash screen when you first load the app and also in the home screen to integrate it into our app graphics.
-*/
 
 import React, {useState, useEffect} from 'react';
 import { Alert, Modal, TouchableWithoutFeedback, Keyboard, FlatList, View, Text, Image, ScrollView, TextInput, StyleSheet, Button, TouchableOpacity} from 'react-native';
@@ -48,7 +41,7 @@ function HomeScreen({navigation}) { //homeScreen
 
     <ScrollView>
       <Text style={styles.homeText}>Welcome!</Text>
-      <Text style={{textAlign:'center',}}>To start building your portfolio press Start.</Text>
+      <Text style={{textAlign:'center'}}>To start building your portfolio press Start.</Text>
       <Button 
         title = "Start"
         onPress={() => navigation.navigate('Portfolio Builder')}
@@ -2816,7 +2809,7 @@ function PortfolioViewer() // This screen is where user can see a collection of 
       <ScrollView>
       <Text style = {{textAlign: 'center'}}>Press the export button to the right to export your portfolio as a PDF!</Text>
       <TouchableOpacity>
-      <Feather name="share" size={50} color="black" onPress={generatePDF} style={{flex: 1, alignSelf: 'flex-end', borderRadius:5,borderWidth: 5,borderColor: "#ffff"}} />
+      <Feather name="share" size={50} color="black" onPress={generatePDF} style={{flex: 1, alignSelf: 'flex-end'}} />
       </TouchableOpacity>
   {sections.map((section, sectionIndex) => (
     section.data.length > 0 && (

@@ -42,10 +42,10 @@ function HomeScreen({navigation}) { //homeScreen
     <ScrollView>
       <Text style={styles.homeText}>Welcome!</Text>
       <Text style={{textAlign:'center'}}>To start building your portfolio press Start.</Text>
-      <Button 
+      {/* <Button 
         title = "Start"
         onPress={() => navigation.navigate('Portfolio Builder')}
-      />
+      /> */}
       <Image source=
       {require("./assets/appicon.png")}
       style={
@@ -53,9 +53,15 @@ function HomeScreen({navigation}) { //homeScreen
        height:350,
        alignItems:'center',
        flex: 1,
+       marginBottom: 10,
+       marginTop: 10,
       }
       }
       />
+
+      <TouchableOpacity onPress={() => navigation.navigate('Portfolio Builder')} style={{backgroundColor: '#2587be', paddingVertical: 15, paddingHorizontal: 30, borderRadius: 5, alignItems: 'center'}}>
+            <Text style={{color: 'white', fontSize: 16,}}>Start</Text>
+        </TouchableOpacity>
       
       
 
@@ -295,6 +301,7 @@ function PersonalInfoForm({addPersonalInfo}) //actual form that users will input
             {/* text field for firstName */}
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='First Name: '
               onChangeText={props.handleChange('firstName')}
               value={props.values.firstName}
@@ -306,6 +313,7 @@ function PersonalInfoForm({addPersonalInfo}) //actual form that users will input
             <Text style = {{marginTop: 5}}>Last Name: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Last Name: '
               onChangeText={props.handleChange('lastName')}
               value={props.values.lastName}
@@ -315,6 +323,7 @@ function PersonalInfoForm({addPersonalInfo}) //actual form that users will input
             <Text style = {{marginTop: 5}}>Address: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Address: '
               onChangeText={props.handleChange('address')}
               value={props.values.address}
@@ -324,6 +333,7 @@ function PersonalInfoForm({addPersonalInfo}) //actual form that users will input
             <Text style = {{marginTop: 5}}>Phone Number: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Phone Number: '
               maxLength={15}
               minLength={5}
@@ -336,6 +346,7 @@ function PersonalInfoForm({addPersonalInfo}) //actual form that users will input
             <Text style = {{marginTop: 5}}>Email: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Email: '
               onChangeText={props.handleChange('email')}
               value={props.values.email}
@@ -515,6 +526,7 @@ function SportsForm({addSport}) //function 2
             <Text style = {{marginTop: 5}}>Sport Name: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Sport Name: '
               onChangeText={props.handleChange('sportName')}
               value={props.values.sportName}
@@ -525,6 +537,7 @@ function SportsForm({addSport}) //function 2
             <Text style = {{marginTop: 5}}>Start Date: (YYYY-MM-DD)</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Start Date: (YYYY-MM-DD) '
               onChangeText={props.handleChange('startDate')}
               value={props.values.startDate}
@@ -534,6 +547,7 @@ function SportsForm({addSport}) //function 2
             <Text style = {{marginTop: 5}}>End Date: (YYYY-MM-DD)</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='End Date: (YYYY-MM-DD) '
               onChangeText={props.handleChange('endDate')}
               value={props.values.endDate}
@@ -543,6 +557,7 @@ function SportsForm({addSport}) //function 2
             <Text style = {{marginTop: 5}}>Average Number of Hours Played Per Week:</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Average Number of Hours Played Per Week: '
               onChangeText={props.handleChange('avgHrsPerWeek')}
               value={props.values.avgHrsPerWeek}
@@ -553,6 +568,7 @@ function SportsForm({addSport}) //function 2
             <Text style = {{marginTop: 5}}>Total Hours Played: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Total Hours Played: '
               onChangeText={props.handleChange('totalHrs')}
               value={props.values.totalHrs}
@@ -563,6 +579,7 @@ function SportsForm({addSport}) //function 2
             <Text style = {{marginTop: 5}}>Grades Participated: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Grades Participated: '
               onChangeText={props.handleChange('gradesParticipated')}
               value={props.values.gradesParticipated}
@@ -571,6 +588,7 @@ function SportsForm({addSport}) //function 2
             <Text style = {styles.errorText}>{props.touched.gradesParticipated && props.errors.gradesParticipated}</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               multiline
               placeholder='Comments: '
               onChangeText={props.handleChange('comments')}
@@ -768,6 +786,7 @@ function EducationsForm({addEducation})
             <Text style = {{marginTop: 5}}>School Name: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='School Name: '
               onChangeText={props.handleChange('schoolName')}
               value={props.values.schoolName}
@@ -778,6 +797,7 @@ function EducationsForm({addEducation})
             <Text style = {{marginTop: 5}}>Location: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Location: '
               onChangeText={props.handleChange('location')}
               value={props.values.location}
@@ -788,6 +808,7 @@ function EducationsForm({addEducation})
             <Text style = {{marginTop: 5}}>Beginning Grade: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Beginning Grade: '
               onChangeText={props.handleChange('beginningGrade')}
               value={props.values.beginningGrade}
@@ -799,6 +820,7 @@ function EducationsForm({addEducation})
             <Text style = {{marginTop: 5}}>Start Date: (YYYY-MM-DD)</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Start Date: (YYYY-MM-DD) '
               onChangeText={props.handleChange('startDate')}
               value={props.values.startDate}
@@ -808,6 +830,7 @@ function EducationsForm({addEducation})
             <Text style = {{marginTop: 5}}>End Date: (YYYY-MM-DD)</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='End Date: (YYYY-MM-DD) '
               onChangeText={props.handleChange('endDate')}
               value={props.values.endDate}
@@ -817,6 +840,7 @@ function EducationsForm({addEducation})
             
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               multiline
               placeholder='Comments: '
               onChangeText={props.handleChange('comments')}
@@ -1011,6 +1035,7 @@ function VolunteerServicesForm({addVolunteerServices})
             <Text style = {{marginTop: 5}}>Position Title:</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Position Title: '
               onChangeText={props.handleChange('positionTitle')}
               value={props.values.positionTitle}
@@ -1021,6 +1046,7 @@ function VolunteerServicesForm({addVolunteerServices})
             <Text style = {{marginTop: 5}}>Organization:</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Organization: '
               onChangeText={props.handleChange('organization')}
               value={props.values.organization}
@@ -1031,6 +1057,7 @@ function VolunteerServicesForm({addVolunteerServices})
             <Text style = {{marginTop: 5}}>Location:</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Location: '
               onChangeText={props.handleChange('location')}
               value={props.values.location}
@@ -1041,6 +1068,7 @@ function VolunteerServicesForm({addVolunteerServices})
             <Text style = {{marginTop: 5}}>Start Date: (YYYY-MM-DD)</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Start Date: (YYYY-MM-DD) '
               onChangeText={props.handleChange('startDate')}
               value={props.values.startDate}
@@ -1050,6 +1078,7 @@ function VolunteerServicesForm({addVolunteerServices})
             <Text style = {{marginTop: 5}}>End Date: (YYYY-MM-DD)</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='End Date: (YYYY-MM-DD) '
               onChangeText={props.handleChange('endDate')}
               value={props.values.endDate}
@@ -1060,6 +1089,7 @@ function VolunteerServicesForm({addVolunteerServices})
             <Text style = {{marginTop: 5}}>Total Hours: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Total Hours: '
               onChangeText={props.handleChange('totalHrs')}
               value={props.values.totalHrs}
@@ -1070,6 +1100,7 @@ function VolunteerServicesForm({addVolunteerServices})
             <Text style = {{marginTop: 5}}>Grades Participated: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Grades Participated: '
               onChangeText={props.handleChange('gradesParticipated')}
               value={props.values.gradesParticipated}
@@ -1078,6 +1109,7 @@ function VolunteerServicesForm({addVolunteerServices})
             <Text style = {styles.errorText}>{props.touched.gradesParticipated && props.errors.gradesParticipated}</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               multiline
               placeholder='Comments: '
               onChangeText={props.handleChange('comments')}
@@ -1276,6 +1308,7 @@ function ECSForm({addEC})
             <Text style = {{marginTop: 5}}>Activity: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Activity: '
               onChangeText={props.handleChange('activity')}
               value={props.values.activity}
@@ -1285,6 +1318,7 @@ function ECSForm({addEC})
             <Text style = {{marginTop: 5}}>Start Date: (YYYY-MM-DD)</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Start Date: (YYYY-MM-DD) '
               onChangeText={props.handleChange('startDate')}
               value={props.values.startDate}
@@ -1294,6 +1328,7 @@ function ECSForm({addEC})
             <Text style = {{marginTop: 5}}>End Date: (YYYY-MM-DD)</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='End Date: (YYYY-MM-DD) '
               onChangeText={props.handleChange('endDate')}
               value={props.values.endDate}
@@ -1303,6 +1338,7 @@ function ECSForm({addEC})
             <Text style = {{marginTop: 5}}>Average Number of Hours Per Week:</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Average Number of Hours Per Week: '
               onChangeText={props.handleChange('avgHrsPerWeek')}
               value={props.values.avgHrsPerWeek}
@@ -1313,6 +1349,7 @@ function ECSForm({addEC})
             <Text style = {{marginTop: 5}}>Total Hours: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Total Hours: '
               onChangeText={props.handleChange('totalHrs')}
               value={props.values.totalHrs}
@@ -1323,6 +1360,7 @@ function ECSForm({addEC})
             <Text style = {{marginTop: 5}}>Grades Participated: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Grades Participated: '
               onChangeText={props.handleChange('gradesParticipated')}
               value={props.values.gradesParticipated}
@@ -1331,6 +1369,7 @@ function ECSForm({addEC})
             <Text style = {styles.errorText}>{props.touched.gradesParticipated && props.errors.gradesParticipated}</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               multiline
               placeholder='Comments: '
               onChangeText={props.handleChange('comments')}
@@ -1524,6 +1563,7 @@ function ACSForm({addAC}) //Awards/Certificates form
             <Text style = {{marginTop: 5}}>Award Name: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Award Name: '
               onChangeText={props.handleChange('awardName')}
               value={props.values.awardName}
@@ -1533,6 +1573,7 @@ function ACSForm({addAC}) //Awards/Certificates form
             <Text style = {{marginTop: 5}}>Date Received: (YYYY-MM-DD)</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Date Received: (YYYY-MM-DD) '
               onChangeText={props.handleChange('dateReceived')}
               value={props.values.dateReceived}
@@ -1543,6 +1584,7 @@ function ACSForm({addAC}) //Awards/Certificates form
             <Text style = {{marginTop: 5}}>Grades Received: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Grades Received: '
               onChangeText={props.handleChange('gradesReceived')}
               value={props.values.gradesReceived}
@@ -1551,6 +1593,7 @@ function ACSForm({addAC}) //Awards/Certificates form
             <Text style = {styles.errorText}>{props.touched.gradesReceived && props.errors.gradesReceived}</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               multiline
               placeholder='Comments: '
               onChangeText={props.handleChange('comments')}
@@ -1736,6 +1779,7 @@ function SASForm({addSA})
             <Text style = {{marginTop: 5}}>Skill/Achievement: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Skill/Achievement: '
               onChangeText={props.handleChange('SAName')}
               value={props.values.SAName}
@@ -1746,6 +1790,7 @@ function SASForm({addSA})
             <Text style = {{marginTop: 5}}>Date Awarded: (YYYY-MM-DD)</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Date Awarded: (YYYY-MM-DD) '
               onChangeText={props.handleChange('dateAwarded')}
               value={props.values.dateAwarded}
@@ -1754,6 +1799,7 @@ function SASForm({addSA})
             <Text style = {styles.errorText}>{props.touched.dateAwarded && props.errors.dateAwarded}</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               multiline
               placeholder='Comments: '
               onChangeText={props.handleChange('comments')}
@@ -1933,6 +1979,7 @@ function MASForm({addMA}, {mas})
             <Text style = {{marginTop: 5}}>Music/Artistic Achievement: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Music/Artistic Achievement:: '
               onChangeText={props.handleChange('MAName')}
               value={props.values.MAName}
@@ -1942,6 +1989,7 @@ function MASForm({addMA}, {mas})
             <Text style = {{marginTop: 5}}>Date Awarded: (YYYY-MM-DD)</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Date Awarded: (YYYY-MM-DD) '
               onChangeText={props.handleChange('dateAwarded')}
               value={props.values.dateAwarded}
@@ -1951,6 +1999,7 @@ function MASForm({addMA}, {mas})
             <Text style = {{marginTop: 5}}>Average Number of Hours Per Week:</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Average Number of Hours Per Week: '
               onChangeText={props.handleChange('avgHrsPerWeek')}
               value={props.values.avgHrsPerWeek}
@@ -1961,6 +2010,7 @@ function MASForm({addMA}, {mas})
             <Text style = {{marginTop: 5}}>Total Hours: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Total Hours: '
               onChangeText={props.handleChange('totalHrs')}
               value={props.values.totalHrs}
@@ -1970,6 +2020,7 @@ function MASForm({addMA}, {mas})
             <Text style = {styles.errorText}>{props.touched.totalHrs && props.errors.totalHrs}</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               multiline
               placeholder='Comments: '
               onChangeText={props.handleChange('comments')}
@@ -2154,6 +2205,7 @@ function LeadershipForm({addLeadership})
             <Text style = {{marginTop: 5}}>Position: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Position: '
               onChangeText={props.handleChange('position')}
               value={props.values.position}
@@ -2162,6 +2214,7 @@ function LeadershipForm({addLeadership})
             <Text style = {styles.errorText}>{props.touched.position && props.errors.position}</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               multiline
               placeholder='Comments: '
               onChangeText={props.handleChange('comments')}
@@ -2345,6 +2398,7 @@ function HCSForm({addHC})
             <Text style = {{marginTop: 5}}>Class Name: </Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Class Name: '
               onChangeText={props.handleChange('className')}
               value={props.values.className}
@@ -2354,6 +2408,7 @@ function HCSForm({addHC})
             <Text style = {{marginTop: 5}}>Start Date: (YYYY-MM-DD)</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='Start Date: (YYYY-MM-DD) '
               onChangeText={props.handleChange('startDate')}
               value={props.values.startDate}
@@ -2363,6 +2418,7 @@ function HCSForm({addHC})
             <Text style = {{marginTop: 5}}>End Date: (YYYY-MM-DD)</Text>
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               placeholder='End Date: (YYYY-MM-DD) '
               onChangeText={props.handleChange('endDate')}
               value={props.values.endDate}
@@ -2372,6 +2428,7 @@ function HCSForm({addHC})
 
             <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               multiline
               placeholder='Comments: '
               onChangeText={props.handleChange('comments')}
@@ -2545,6 +2602,7 @@ function AIForm({addAI})
         <KeyboardAwareScrollView>
         <TextInput 
               style={styles.formikInput}
+              placeholderTextColor='rgba(0, 0, 0, 0.5)'
               multiline
               placeholder='Additional Info: '
               onChangeText={props.handleChange('comments')}
@@ -2919,7 +2977,7 @@ const styles = StyleSheet.create({ //all styles for components seen throughout t
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
-   // backgroundColor: 'skyblue',
+    backgroundColor: '#F5F5F5',
   },
 
   portfolioBuilderContainer: {

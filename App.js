@@ -353,7 +353,10 @@ function PersonalInfoForm({addPersonalInfo}) //actual form that users will input
               onBlur={props.handleBlur('email')}
             />
             <Text style = {styles.errorText}>{props.touched.email && props.errors.email}</Text>
-            <Button title='Submit' onPress={props.handleSubmit} />
+            <TouchableOpacity onPress={props.handleSubmit} style={{backgroundColor: '#2587be', marginLeft: .5, marginRight: .5, paddingVertical: 15, paddingHorizontal: 30, borderRadius: 5, alignItems: 'center'}}>
+              <Text style={{color: 'white', fontSize: 16,}}>Submit</Text>
+            </TouchableOpacity>
+            
             </KeyboardAwareScrollView>
         )}
       </Formik>
@@ -598,7 +601,9 @@ function SportsForm({addSport}) //function 2
             <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
 
             
-            <Button title='Submit' onPress={props.handleSubmit} />
+            <TouchableOpacity onPress={props.handleSubmit} style={{backgroundColor: '#2587be', marginLeft: .5, marginRight: .5, paddingVertical: 15, paddingHorizontal: 30, borderRadius: 5, alignItems: 'center'}}>
+              <Text style={{color: 'white', fontSize: 16,}}>Submit</Text>
+            </TouchableOpacity>
           </KeyboardAwareScrollView>
         )}
       </Formik>
@@ -850,7 +855,9 @@ function EducationsForm({addEducation})
             <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
 
             
-            <Button title='Submit' onPress={props.handleSubmit} />
+            <TouchableOpacity onPress={props.handleSubmit} style={{backgroundColor: '#2587be', marginLeft: .5, marginRight: .5, paddingVertical: 15, paddingHorizontal: 30, borderRadius: 5, alignItems: 'center'}}>
+              <Text style={{color: 'white', fontSize: 16,}}>Submit</Text>
+            </TouchableOpacity>
           </KeyboardAwareScrollView>
         )}
       </Formik>
@@ -1119,7 +1126,9 @@ function VolunteerServicesForm({addVolunteerServices})
             <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
 
             
-            <Button title='Submit' onPress={props.handleSubmit} />
+            <TouchableOpacity onPress={props.handleSubmit} style={{backgroundColor: '#2587be', marginLeft: .5, marginRight: .5, paddingVertical: 15, paddingHorizontal: 30, borderRadius: 5, alignItems: 'center'}}>
+              <Text style={{color: 'white', fontSize: 16,}}>Submit</Text>
+            </TouchableOpacity>
           </KeyboardAwareScrollView>
         )}
       </Formik>
@@ -1379,7 +1388,9 @@ function ECSForm({addEC})
             <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
 
             
-            <Button title='Submit' onPress={props.handleSubmit} />
+             <TouchableOpacity onPress={props.handleSubmit} style={{backgroundColor: '#2587be', marginLeft: .5, marginRight: .5, paddingVertical: 15, paddingHorizontal: 30, borderRadius: 5, alignItems: 'center'}}>
+              <Text style={{color: 'white', fontSize: 16,}}>Submit</Text>
+            </TouchableOpacity>
           </KeyboardAwareScrollView>
         )}
       </Formik>
@@ -1601,7 +1612,9 @@ function ACSForm({addAC}) //Awards/Certificates form
               onBlur={props.handleBlur('comments')}
             />
             <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
-            <Button title='Submit' onPress={props.handleSubmit} />
+             <TouchableOpacity onPress={props.handleSubmit} style={{backgroundColor: '#2587be', marginLeft: .5, marginRight: .5, paddingVertical: 15, paddingHorizontal: 30, borderRadius: 5, alignItems: 'center'}}>
+              <Text style={{color: 'white', fontSize: 16,}}>Submit</Text>
+            </TouchableOpacity>
           </KeyboardAwareScrollView>
     
       )}
@@ -1809,7 +1822,9 @@ function SASForm({addSA})
             <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
 
             
-            <Button title='Submit' onPress={props.handleSubmit} />
+             <TouchableOpacity onPress={props.handleSubmit} style={{backgroundColor: '#2587be', marginLeft: .5, marginRight: .5, paddingVertical: 15, paddingHorizontal: 30, borderRadius: 5, alignItems: 'center'}}>
+              <Text style={{color: 'white', fontSize: 16,}}>Submit</Text>
+            </TouchableOpacity>
           </KeyboardAwareScrollView>
         )}
       </Formik>
@@ -2030,7 +2045,9 @@ function MASForm({addMA}, {mas})
             <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
 
             
-            <Button title='Submit' onPress={props.handleSubmit} />
+             <TouchableOpacity onPress={props.handleSubmit} style={{backgroundColor: '#2587be', marginLeft: .5, marginRight: .5, paddingVertical: 15, paddingHorizontal: 30, borderRadius: 5, alignItems: 'center'}}>
+              <Text style={{color: 'white', fontSize: 16,}}>Submit</Text>
+            </TouchableOpacity>
           </KeyboardAwareScrollView>
         )}
       </Formik>
@@ -2224,7 +2241,9 @@ function LeadershipForm({addLeadership})
             <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
 
             
-            <Button title='Submit' onPress={props.handleSubmit} />
+             <TouchableOpacity onPress={props.handleSubmit} style={{backgroundColor: '#2587be', marginLeft: .5, marginRight: .5, paddingVertical: 15, paddingHorizontal: 30, borderRadius: 5, alignItems: 'center'}}>
+              <Text style={{color: 'white', fontSize: 16,}}>Submit</Text>
+            </TouchableOpacity>
           </KeyboardAwareScrollView>
         )}
       </Formik>
@@ -2438,7 +2457,9 @@ function HCSForm({addHC})
             <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
 
             
-            <Button title='Submit' onPress={props.handleSubmit} />
+             <TouchableOpacity onPress={props.handleSubmit} style={{backgroundColor: '#2587be', marginLeft: .5, marginRight: .5, paddingVertical: 15, paddingHorizontal: 30, borderRadius: 5, alignItems: 'center'}}>
+              <Text style={{color: 'white', fontSize: 16,}}>Submit</Text>
+            </TouchableOpacity>
           </KeyboardAwareScrollView>
         )}
       </Formik>
@@ -2612,7 +2633,9 @@ function AIForm({addAI})
             <Text style = {styles.errorText}>{props.touched.comments && props.errors.comments}</Text>
 
             
-            <Button title='Submit' onPress={props.handleSubmit} />
+             <TouchableOpacity onPress={props.handleSubmit} style={{backgroundColor: '#2587be', marginLeft: .5, marginRight: .5, paddingVertical: 15, paddingHorizontal: 30, borderRadius: 5, alignItems: 'center'}}>
+              <Text style={{color: 'white', fontSize: 16,}}>Submit</Text>
+            </TouchableOpacity>
           </KeyboardAwareScrollView>
         )}
       </Formik>

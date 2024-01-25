@@ -17,6 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { printToFileAsync} from 'expo-print';
 import * as Share from 'expo-sharing';
 
+
 import { AppProvider, useAppContext } from './AppContext'; //see AppContext.js
 import Header from './Customcomponents/header'; //custom component for Header
 
@@ -35,6 +36,8 @@ function Card(props) //custom component for Card
 
 
 function HomeScreen({navigation}) { //homeScreen
+  
+  
   return (
     <View style={styles.container}>
     
@@ -62,6 +65,8 @@ function HomeScreen({navigation}) { //homeScreen
       <TouchableOpacity onPress={() => navigation.navigate('Portfolio Builder')} style={{backgroundColor: '#2587be', paddingVertical: 15, paddingHorizontal: 30, borderRadius: 5, alignItems: 'center'}}>
             <Text style={{color: 'white', fontSize: 16,}}>Start</Text>
         </TouchableOpacity>
+
+        
       
       
 
@@ -375,7 +380,7 @@ Third function is a detailed info screen that will open if the user presses on o
 */
 
 
-function AthleticAchievements({ navigation }) { //function 1
+function AthleticAchievements({ navigation }) { //function 1 loads and displays all data on screen
   const [sports, setSports] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -498,7 +503,7 @@ function AthleticAchievements({ navigation }) { //function 1
 
 
 
-function SportsForm({addSport}) //function 2
+function SportsForm({addSport}) //function 2 is the form shown in the modal implemented with Formik including validation logic from Yup and saves data
 {
   const sportsSchema = yup.object({
     sportName: yup.string().required('This field is required.').min(3, 'Must be at least 3 characters'),
@@ -611,7 +616,7 @@ function SportsForm({addSport}) //function 2
   )
 }
 
-function SportInfo({route,navigation}) //function 3
+function SportInfo({route,navigation}) //function 3 loads and displays specific data from the overview card
 {
   const {item} = route.params;
   

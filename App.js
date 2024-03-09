@@ -18,6 +18,9 @@ import { printToFileAsync} from 'expo-print';
 import * as Share from 'expo-sharing';
 
 
+// import Share from 'react-native-share';
+
+
 import { AppProvider, useAppContext } from './AppContext'; //see AppContext.js
 import Header from './Customcomponents/header'; //custom component for Header
 

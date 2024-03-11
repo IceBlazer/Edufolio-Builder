@@ -230,7 +230,7 @@ function PersonalInfo({navigation}) //Personal Info Screen
                   onPress: () => removePersonalInfo(item),
                 }
               ], 
-              { cancelable: 'false'}
+              { cancelable: false}
             )}>
                 <MaterialIcons name = 'delete' size={30} color = "red"  />
                 <Text style={styles.sectionInfoCard}>{item.firstName} {item.lastName}</Text>
@@ -453,7 +453,7 @@ function AthleticAchievements({ navigation }) { //function 1 loads and displays 
                   onPress: () => removeSport(item),
                 }
               ], 
-              { cancelable: 'false'}
+              { cancelable: false}
             )}>
                 <MaterialIcons name = 'delete' size={30} color = "red"  /> 
                
@@ -720,7 +720,7 @@ function Education({navigation})
                   onPress: () => removeEducation(item),
                 }
               ], 
-              { cancelable: 'false'}
+              { cancelable: false}
             )}>
                 <MaterialIcons name = 'delete' size={30} color = "red"  /> 
                
@@ -968,7 +968,7 @@ function VolunteerServices({navigation})
                   onPress: () => removeVolunteerService(item),
                 }
               ], 
-              { cancelable: 'false'}
+              { cancelable: false}
             )}>
                 <MaterialIcons name = 'delete' size={30} color = "red"  /> 
                
@@ -1242,7 +1242,7 @@ function EC({navigation}) //Extracurricular Activities
                   onPress: () => removeEC(item),
                 }
               ], 
-              { cancelable: 'false'}
+              { cancelable: false}
             )}>
                 <MaterialIcons name = 'delete' size={30} color = "red"  /> 
                 </TouchableOpacity>
@@ -1503,7 +1503,7 @@ function AwardsCertificates({navigation})
                   onPress: () => removeAC(item),
                 }
               ], 
-              { cancelable: 'false'}
+              { cancelable: false}
             )}>
                 <MaterialIcons name = 'delete' size={30} color = "red"  /> 
                
@@ -1726,7 +1726,7 @@ function SA({navigation}) //Skills/Achievements
                   onPress: () => removeSA(item),
                 }
               ], 
-              { cancelable: 'false'}
+              { cancelable: false}
             )}>
                 <MaterialIcons name = 'delete' size={30} color = "red"  /> 
                
@@ -1928,7 +1928,7 @@ function MA({navigation}) //Music/Artistic Achievements
                   onPress: () => removeMA(item),
                 }
               ], 
-              { cancelable: 'false'}
+              { cancelable: false}
             )}>
                 <MaterialIcons name = 'delete' size={30} color = "red"  /> 
                
@@ -2155,7 +2155,7 @@ function Leadership({navigation}) //Leaderships
                   onPress: () => removeLeadership(item),
                 }
               ], 
-              { cancelable: 'false'}
+              { cancelable: false}
             )}>
                 <MaterialIcons name = 'delete' size={30} color = "red"  /> 
                 </TouchableOpacity>
@@ -2348,7 +2348,7 @@ function HC({navigation}) //Honors Classes
                   onPress: () => removeHC(item),
                 }
               ], 
-              { cancelable: 'false'}
+              { cancelable: false}
             )}>
                 <MaterialIcons name = 'delete' size={30} color = "red"  /> 
                 </TouchableOpacity>
@@ -2566,7 +2566,7 @@ function AdditionalInfo() // Additional Information
                     onPress: () => removeAI(item),
                   }
                 ], 
-                { cancelable: 'false'}
+                { cancelable: false}
               )}>
                   <MaterialIcons name = 'delete' size={30} color = "red"  />
                   <Text style={styles.infoSubtitle}>{item.comments}</Text>
